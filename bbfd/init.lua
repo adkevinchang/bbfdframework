@@ -8,5 +8,6 @@ require "bbfd.comps.Logger"
 
 TouchGestureUtil = require("bbfd.utils.TouchGestureUtil")
 DisplayUtil = require("bbfd.utils.DisplayUtil")
+CryptoUtil = require("bbfd.utils.CryptoUtil")
 
 --endregion

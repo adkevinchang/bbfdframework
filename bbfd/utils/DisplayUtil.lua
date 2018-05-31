@@ -222,7 +222,116 @@ function DisplayUtil:popEffectBS(node,overcall)
     node:runAction(action)
 end
 
+--由大到小
+function DisplayUtil:bigToSmallEffect(node,overcall)
+    --printInfo("DisplayUtil:bigToSmallEffect")
+    local currscale = node:getScale();
+    node:setVisible(true)
+    node:setOpacity(1)
+    node:setScale(node:getScale()*5)
+    local  fadein = cc.FadeIn:create(0.6)
+    local  scale1 = cc.ScaleTo:create(0.6,currscale)
 
+    if overcall ~= nil then
+         local  finish = cc.CallFunc:create(overcall)
+         local  action = cc.Sequence:create(fadein,scale1,finish)
+         node:runAction(action)
+    else
+         local  action = cc.Sequence:create(fadein,scale1)
+         node:runAction(action)
+    end
+     --dump(node)
+end
+
+--解析资源的节点
+function DisplayUtil:parseChildrenName(mself,parent) 
+    if parent ~= nil then
+        for k,v in pairs(parent:getChildren()) do
+            mself[v:getName()] = v
+            self:parseChildrenName(mself,v)
+        end
+    end
+end
+
+--数字翻滚
+function DisplayUtil:showNumEffect(node,nums,overcall)
+--[[
+    local currnum = 0
+    local currtime = createTimer()
+    local function setnum()
+        if node == nil then return end
+        currnum = currnum + 1
+        node:setString(tostring(currnum))
+        if currnum >= tonumber(nums) then
+             node:setString(tostring(nums))
+             currtime:killAll()
+             if overcall ~= nil then
+               overcall()
+             end
+        end
+    end
+    currtime:start(setnum,0.2,100000)
+
+    local size = node:getContentSize()
+    local taction = {}
+    local X = size.width/2
+    local Y = size.height/2
+    local UPY = 2*Y
+    local DownY = 0
+    local move1 = cc.MoveTo:create(0.05,cc.p(X,UPY))
+    local move2 = cc.MoveTo:create(0.05,cc.p(X,DownY))
+    local move3 = cc.MoveTo:create(0.05,cc.p(X,Y))
+
+    local scale = cc.ScaleTo:create(0.2,2)
+    local scale1 = cc.ScaleTo:create(0.05,1,0.001)
+    local scale2 = cc.ScaleTo:create(0.05,1,1)
+
+    local UP =   cc.Sequence:create(move1,scale1)
+    local Down =   cc.Sequence:create(move2,scale1,scale2,move3)
+    local spawn = cc.Spawn:create(UP,seq,Down)
+    local rep = cc.Repeat:create(spawn,rtime)
+--设置真值
+    local function setnum()
+        --_beginNum =  _endNum
+        node:setString(tostring(nums))
+    end
+
+    local call = cc.CallFunc:create(setnum)
+    local seq2 = cc.Sequence:create(rep,delay,call)
+        table.insert(taction,seq2)
+        table.insert(taction,scale)
+        table.insert(taction,scale2)
+    local seqaction = cc.Sequence:create(taction)
+    node:runAction(seqaction)]]
+
+end
+
+--[[
+
+延迟
+    local delay =cc.DelayTime:create(0.01)
+        table.insert(taction,delay)
+--扩大
+        local scale = cc.ScaleTo:create(0.2,2)
+        local scale2 = cc.ScaleTo:create(0.2,1)
+           table.insert(taction,scale)
+           table.insert(taction,scale2)
+-- 数值改变
+        _endNum =10000
+        math.randomseed(3000)
+        _dis = math.random(5000,10000)
+        print(_dis)
+    local rtime = (_endNum-_beginNum)/_dis
+        print(rtime)
+    function chagenum()
+        if (_beginNum <  _endNum) then
+           _beginNum= _beginNum +_dis
+            txt:setString(_beginNum)
+        elseif (_beginNum ==  _endNum) then
+            txt:setString(  _endNum)
+        end
+    end
+    local seq = cc.Sequence:create(delay,cc.CallFunc:create(chagenum))]]
 --endregion
 
 return DisplayUtil

@@ -15,7 +15,7 @@ function loggerGameLog(fmt, ...)
         "] ",
         string.format(tostring(fmt), ...)
     }
-    local file = io.open("GameLog.log", "a+")  
+    local file = io.open(getDeviceLocalDir().."/GameLog.log", "a+")  
     file:write("\n"..table.concat(t).."\n")  
     file:close()  
 	
@@ -28,7 +28,7 @@ function loggerNodeTree()
         return 
     end
     printInfo("打印当前场景的渲染树 s="..os.time())
-    local file = io.open("NodeTree.txt", "w")  
+    local file = io.open(getDeviceLocalDir().."/NodeTree.txt", "w")  
     file:write("\n用来输出渲染树，检测内存泄漏\n")  
     file:write("\n======================= Render Node Tree Begin =======================\n")  
     searchNodeTree(display.getRunningScene(), 1, file)  
@@ -130,7 +130,7 @@ function printTT(content, ...)
     print(out_str .. "\n")
 
     -- local logFileName = os.date("print_tab_%Y_%m_%d.log", os.time())
-    local logFileName = "GameLog.log"
+    local logFileName = getDeviceLocalDir().."/GameLog.log"
     local file = assert(io.open(logFileName, "a+"))
     file:write(out_str .. "\n")
     file:close()
@@ -216,7 +216,7 @@ function loggerDump(value, desciption, nesting)
     end
     dump_(value, desciption, "- ", 1)
 
-    local logFileName = "GameLog.log"
+    local logFileName = getDeviceLocalDir().."/GameLog.log"
     local file = assert(io.open(logFileName, "a+"))
     for i, line in ipairs(result) do
         print(line)
@@ -225,4 +225,18 @@ function loggerDump(value, desciption, nesting)
     file:close()
 end
 
+--获取应用所在设备本地文件夹
+function getDeviceLocalDir()
+
+    if device.platform == "windows" then
+        return "./ddtcyj"
+    elseif device.platform == "android" then
+        return "/mnt/sdcard/ddtcyj"
+    elseif device.platform == "ios" then
+        return "/ducoment/ddtcyj"
+    else
+        return ""
+    end
+
+end
 --endregion

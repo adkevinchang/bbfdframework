@@ -9,11 +9,22 @@ function BaseComponent:onCreate()
     if self["closeBtn"] then
         self:addClickEventListener(self.closeBtn,handler(self,self.onClickClose))
     end
-
+    self:registerScriptHandler(function(eventType)
+    if eventType == "enterTransitionFinish" then
+        -- 场景被加载完成
+        --self:onEnter()
+        self:initLayout()
+    end
+    end)
 end
 
 --初始化小组件
 function BaseComponent:initComponent(info)
+    
+end
+
+--ui适配布局
+function BaseScene:initLayout()
 
 end
 
@@ -29,6 +40,10 @@ function BaseComponent:onEnter()
     --添加键盘事件
     self:addKeybordEventListener()
 end
+
+--function BaseComponent:onExit()
+
+--end
 
 --按钮点击事件(按下缩放效果)
 --@btnNode 按钮节点
@@ -165,8 +180,19 @@ function BaseComponent:evtMgr()
     return bbfd.evtMgr
 end
 
+--动画管理类
+function BaseComponent:animMgr()
+    return bbfd.animMgr
+end
+
+--声音管理类
+function BaseComponent:audioMgr()
+    return bbfd.audioMgr
+end
+
+
 function BaseComponent:goDispose()
-    BaseComponent.super:goDispose()
+    BaseComponent.super:goDispose(self)
     if  self.controlTimer_ ~= nil then
         self.controlTimer_:killAll()
         self.controlTimer_ = nil
@@ -175,7 +201,7 @@ function BaseComponent:goDispose()
 end
 
 --增加定时器
-function BaseComponent:controlTimer(args)
+function BaseComponent:controlTimer()
     if  self.controlTimer_ == nil then
         self.controlTimer_ = require("bbfd.utils.Timer"):create()
     end

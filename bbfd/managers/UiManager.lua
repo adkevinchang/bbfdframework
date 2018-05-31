@@ -70,18 +70,32 @@ function UiManager:initScene(scene)
     if not scene then
           error(" UiManager:initScene - invalid parameters", 0)
     end
+	
     if(self.currScene ~= nil and self.currScene._isuse~=nil)then
-        self:getBgLayer():removeAllChildren()
-        self:getGameLayer():removeAllChildren()
-        self:getPanelLayer():removeAllChildren()
-        self:getMaskLayer():removeAllChildren()
         self.currScene:removeAllChildren()
-        bbfd.poolMgr:putInPool(self:getBgLayer(),"CCLayer")
-        bbfd.poolMgr:putInPool(self:getGameLayer(),"CCLayer")
-        bbfd.poolMgr:putInPool(self:getPanelLayer(),"CCLayer")
-        bbfd.poolMgr:putInPool(self:getMaskLayer(),"CCLayer")
         bbfd.poolMgr:putInPool(self.currScene,"CCScene")
     end
+	
+    if self.currLayers ~=nil then
+        if(self:getBgLayer() ~= nil and self:getBgLayer()._isuse~=nil)then
+	        self:getBgLayer():removeAllChildren()
+		    bbfd.poolMgr:putInPool(self:getBgLayer(),"CCLayer")
+	    end
+	    if(self:getGameLayer() ~= nil and self:getGameLayer()._isuse~=nil)then
+	       self:getGameLayer():removeAllChildren()
+	       bbfd.poolMgr:putInPool(self:getGameLayer(),"CCLayer")
+	    end
+	    if(self:getPanelLayer() ~= nil and self:getPanelLayer()._isuse~=nil)then
+	       self:getPanelLayer():removeAllChildren()
+	       bbfd.poolMgr:putInPool(self:getPanelLayer(),"CCLayer")
+	    end
+	    if(self:getMaskLayer() ~= nil and self:getMaskLayer()._isuse~=nil)then
+		    self:getMaskLayer():removeAllChildren()
+            bbfd.poolMgr:putInPool(self:getMaskLayer(),"CCLayer")
+	    end
+    end
+	
+	self.currScene = nil
     self.currScene = scene
     self:initLayer("mainbg","maingame","mainmask","mianpanel")
     self:initLoadAction()
@@ -157,15 +171,7 @@ end
 
 function UiManager:clearCurrScene()
     if(self.currScene ~= nil and self.currScene._isuse~=nil)then
-        self:getBgLayer():removeAllChildren()
-        self:getGameLayer():removeAllChildren()
-        self:getPanelLayer():removeAllChildren()
-        self:getMaskLayer():removeAllChildren()
         self.currScene:removeAllChildren()
-        bbfd.poolMgr:putInPool(self:getBgLayer(),"CCLayer")
-        bbfd.poolMgr:putInPool(self:getGameLayer(),"CCLayer")
-        bbfd.poolMgr:putInPool(self:getPanelLayer(),"CCLayer")
-        bbfd.poolMgr:putInPool(self:getMaskLayer(),"CCLayer")
         bbfd.poolMgr:putInPool(self.currScene,"CCScene")
     end
     self.currScene = nil

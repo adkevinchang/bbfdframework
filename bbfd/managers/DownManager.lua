@@ -20,20 +20,42 @@ callback:异步加载完后回调
 size:加载文件多少
 ...：文件名
 ]]
-function DownManager:AsyncDownAssets(callback,size,...)
-   if size<=0 or callback==nil then
+function DownManager:AsyncDownAssets(callback,...)
+   local loadList = {...}
+   local loadSize = table.nums(loadList)
+
+   if loadSize<=0 or callback==nil then
        error(" DownManager:AsyncDownAssets - no callback or no file", 0)
    end
-   local loadingArray = {...}
+   local loadingArray = {"","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",}
+
+   if loadSize > 40 then
+       loadSize = 40
+       printInfo("DownManager:AsyncDownAssets-预加载尺寸超出！")
+   end
+
+   for i=1,loadSize do
+    	loadingArray[i] = loadList[i]
+   end
+
    self.asyncCallBack = callback
-   threadLoadAssets(function( step )
-        printInfo("threadLoadAssets step:"..step.." asset:"..loadingArray[step])
-        if step >= size then
+   threadLoadAssets(function(step)
+        printInfo("DownManager:AsyncDownAssets step:"..step.." asset:"..loadingArray[step])
+        if step >= loadSize then
         	--结束时返回
-    		self.asyncCallBack()
-            bbfd.evtMgr():getInstance():Brocast(bbfd.EVENT_ASYNC_DONW_FINISH)
+            if self.asyncCallBack == nil then
+                bbfd.evtMgr():getInstance():Brocast(bbfd.EVENT_ASYNC_DONW_FINISH)
+            else 
+                self.asyncCallBack()
+            end
+    		
         end
-    end,size,...)
+    end,loadSize,loadingArray[1],loadingArray[2],loadingArray[3],loadingArray[4],loadingArray[5],loadingArray[6],loadingArray[7],
+    loadingArray[8],loadingArray[9],loadingArray[10],loadingArray[11],loadingArray[12],loadingArray[13],loadingArray[14],loadingArray[15],
+    loadingArray[16],loadingArray[17],loadingArray[18],loadingArray[19],loadingArray[20],loadingArray[21],loadingArray[22],loadingArray[23],loadingArray[24],loadingArray[25],
+    loadingArray[26],loadingArray[27],loadingArray[28],loadingArray[29],loadingArray[30],loadingArray[31],loadingArray[32],loadingArray[33],loadingArray[34],loadingArray[35],
+    loadingArray[36],loadingArray[37],loadingArray[38],loadingArray[39],loadingArray[40])
+
 end
 
 --endregion

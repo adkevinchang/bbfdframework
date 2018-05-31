@@ -12,6 +12,20 @@ function BaseScene:goEnter()
 
 end
 
+function BaseScene:showWithScene(transition, time, more)
+    self:setVisible(true)
+    self:registerScriptHandler(function(eventType)
+    if eventType == "enterTransitionFinish" then
+        -- 场景被加载完成
+        self:initLayout()
+    end
+    end)
+end
+
+function BaseScene:initLayout()
+
+end
+
 function BaseScene:changGameScene()
 
 end

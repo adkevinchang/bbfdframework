@@ -15,7 +15,7 @@ function AudioManager:getInstance()
 end
 
 function AudioManager:ctor()
-    print("AudioManager:ctor")
+    printInfo("AudioManager:ctor")
 
     self.simpleAudioEngine = false
     self.isTVApp = false--GameConfig.IS_TV
@@ -34,7 +34,7 @@ end
 -- 播放背景音乐
 function AudioManager:playBackgroundMusic(filePath,loop)
 
-    print("ddddddddddd  "..filePath)
+    printInfo("ddddddddddd  "..filePath)
     self:stopMusic()
     self:playMusic(filePath,loop)
 end

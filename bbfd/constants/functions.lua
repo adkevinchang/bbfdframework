@@ -25,6 +25,11 @@ function StartupGameControl(modename,viewname,modelvo)
     return control
 end
 
+function createTimer()
+    local currtime = require("bbfd.utils.Timer"):create()
+    return currtime
+end
+
 --重新载入lua文件
 function reload(file)
     package.loaded[file] = nil

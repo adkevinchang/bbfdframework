@@ -92,7 +92,9 @@ end
 --@animation 动画实例
 --@animName 动画名字
 function AnimationManager:playAnimation(animation,animName)
-    animation:getAnimation():gotoAndPlay(animName)
+    if animation ~= nil then
+       animation:getAnimation():gotoAndPlay(animName)
+    end
 end
 
 --播放龙骨动画带回调函数
@@ -119,6 +121,23 @@ function AnimationManager:playAnimationCallBack(animation,animStartName,animEndN
             end,delayTime)
         end
     end)
+end
+
+--[[
+boneNode:龙骨名称
+清除指定的龙骨文件缓存与图片资源缓存
+kevin
+]]
+function AnimationManager:disposeDragonBones(boneNode,boneFile)
+    if not self.dbFactory then return end
+    if boneNode == nil and boneFile == nil then
+        self.dbFactory:dispose(false)      --清空所有龙骨动画
+        display.removeUnusedSpriteFrames()                  --清除所有不用纹理
+        return
+    end
+    self.dbFactory:removeDragonBonesData(boneNode)
+    self.dbFactory:removeTextureAtlas(boneNode)
+    display.removeImage(boneFile.."/texture.png")
 end
 
 --endregion
