@@ -6,6 +6,16 @@
 
 local ControlBase = class("ControlBase")
 
+--解析资源的节点
+local function parseChildrenName(self,parent) 
+    if parent ~= nil then
+        for k,v in pairs(parent:getChildren()) do
+            self[v:getName()] = v
+            parseChildrenName(self,v)
+        end
+    end
+end
+
 function ControlBase:ctor(cview,cmodel)
     self.view_ = cview
     self.model_ = cmodel
@@ -14,6 +24,7 @@ function ControlBase:ctor(cview,cmodel)
     local binding = rawget(self.class, "RESOURCE_BINDING")
     if  self:getView() and binding then
         self:createViewBinding(binding)
+        parseChildrenName(self,self:getView():getResourceNode())
     end
 
     if self.view_ or self.model_ then
@@ -29,6 +40,7 @@ function ControlBase:initCtor(cview,cmodel)
     local binding = rawget(self.class, "RESOURCE_BINDING")
     if  self:getView() and binding then
         self:createViewBinding(binding)
+        parseChildrenName(self,self:getView():getResourceNode())
     end
 
     if self.onCreate then self:onCreate() end
@@ -84,6 +96,10 @@ function ControlBase:initModModel(modelvo)
     return self.model_
 end
 
+function ControlBase:showInScene(scene_)
+
+end
+
 --设置模块的包名
 function ControlBase:setModName(modname)
    self.modName_ = modname
@@ -99,15 +115,15 @@ function ControlBase:goDispose()
     if self.destroy_ then 
         self.destroy_()
     end
-    if self.getView() then
-       self.getView():goDispose()
+    if self:getView() then
+       self:getView():goDispose()
        self.view_ = nil
     end
-    if self.getModel() then
-        self.getModel():goDispose()
+    if self:getModel() then
+        self:getModel():goDispose()
         self.model_ = nil
     end
-    self:uiMgr():clearCurrScene()
+    --self:uiMgr():clearCurrScene()
 
     --根据自己模块的需求使用垃圾回收
     if type(DEBUG) == "number" or DEBUG == 2 then
