@@ -36,7 +36,6 @@ end
 function ControlBase:initCtor(cview,cmodel)
     self.view_ = cview
     self.model_ = cmodel
-
     local binding = rawget(self.class, "RESOURCE_BINDING")
     if  self:getView() and binding then
         self:createViewBinding(binding)
@@ -48,7 +47,9 @@ end
 
 --初始化控制组件的view交互事件
 function ControlBase:onCreate()
-    
+    self.viewonexithandler = handler(self,self.goDispose)
+    self:evtMgr():AddListener(bbfd.EVENT_VIEW_ONEXIT,self.viewonexithandler)
+
 end
 
 function ControlBase:createViewBinding(binding)
@@ -72,28 +73,31 @@ end
 -- self.model_ = cmodel
 
 function ControlBase:initFunMod(viewname,modelvo)
-   self.view_ = self:initModView(viewname)
-   self.model_ = self:initModModel(modelvo)
+ --printInfo("ControlBase:initFunModa"..self.view_)
+   local viewtmp = self:initModView(viewname)
+   local modeltmp = self:initModModel(modelvo)
    --子类重构
-   self:initCtor(view,model)
+   self:initCtor(viewtmp,modeltmp)
 
+   --printInfo("ControlBase:initFunModa"..self.view_)
+   --printInfo("ControlBase:initFunModb"..self.model_)
    --XXX.super.initFunMod(self,viewname,modelvo)
 end
 
 function ControlBase:initModView(viewname)
     assert(self.modName_ , "ControlBase initModView() -  don't find "..self.modName_)
     local classpath = "app.views."..self.modName_.."."..self.modName_.."View"
-    self.view_ = require(classpath):create(nil,viewname)
-    assert(self.view_ , "ControlBase initModView() -  don't find "..classpath)
-    return self.view_
+    local viewtmp = require(classpath):create(nil,viewname)
+    assert(viewtmp, "ControlBase initModView() -  don't find "..classpath)
+    return viewtmp
 end
 
 function ControlBase:initModModel(modelvo)
     assert(self.modName_ , "ControlBase initModModel() -  don't find "..self.modName_)
     local classpath = "app.views."..self.modName_.."."..self.modName_.."Model"
-    self.model_ = require(classpath):create(modelvo)
-    assert(self.model_ , "ControlBase initModModel() -  don't find "..classpath)
-    return self.model_
+    local modeltmp = require(classpath):create(modelvo)
+    assert(modeltmp, "ControlBase initModModel() -  don't find "..classpath)
+    return modeltmp
 end
 
 function ControlBase:showInScene(scene_)
@@ -111,16 +115,25 @@ end
 
 --清除所有的内存和监听事件
 --清除所有的常量
+--view的移除操作不可以写在销毁方法中
 function ControlBase:goDispose()
+    if self.viewonexithandler then
+        self:evtMgr():removeListener(bbfd.EVENT_VIEW_ONEXIT,self.viewonexithandler)
+    end
+    
     if self.destroy_ then 
         self.destroy_()
     end
-    if self:getView() then
+    --not tolua.isnull(self:getView())
+    if not tolua.isnull(self:getView()) then
        self:getView():goDispose()
        self.view_ = nil
     end
-    if self:getModel() then
-        self:getModel():goDispose()
+
+    if self:getModel() ~= nil then
+        if self:getModel().goDispose then
+          self:getModel():goDispose()
+       end
         self.model_ = nil
     end
     --self:uiMgr():clearCurrScene()

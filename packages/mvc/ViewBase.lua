@@ -18,7 +18,6 @@ function ViewBase:ctor(app,name,...)
     self:enableNodeEvents()
     self.app_ = app
     self.name_ = name
-
     -- check CSB resource file
     local res = rawget(self.class, "RESOURCE_FILENAME")
     if res then
@@ -83,10 +82,6 @@ function ViewBase:showWithScene(transition, time, more)
     return self
 end
 
-function ViewBase:onEnter()
-
-end
-
 -- 遍历UI节点,返回指定名字的Node, 递归
 function ViewBase:findNodeByName(root, name)
     if not root.getChildByName then return nil end
@@ -104,6 +99,11 @@ function ViewBase:findNodeByName(root, name)
         end
     end
 end
+
+function ViewBase:onExit()  
+   self:goDispose()
+   self:evtMgr():Brocast(bbfd.EVENT_VIEW_ONEXIT)
+end  
 
 --endregion
 function ViewBase:goDispose()
@@ -128,6 +128,9 @@ function ViewBase:poolMgr()
    return bbfd.poolMgr;
 end
 
+function ViewBase:evtMgr()
+    return bbfd.evtMgr
+end
 --endregion
 
 return ViewBase
