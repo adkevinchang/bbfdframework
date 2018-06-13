@@ -53,7 +53,7 @@ end
 --广播事件
 function EventManager:Brocast(event,...)
     if not EventManager.events[event] then
-        error("Brocast"..event.."has no event");
+        --error("Brocast"..event.."has no event");
     else
         printInfo("EventManager:Brocast"..event)
         EventManager.events[event]:fire(...);

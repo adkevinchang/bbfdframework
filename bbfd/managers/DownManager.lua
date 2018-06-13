@@ -27,6 +27,13 @@ function DownManager:AsyncDownAssets(callback,...)
    if loadSize<=0 or callback==nil then
        error(" DownManager:AsyncDownAssets - no callback or no file", 0)
    end
+   
+   if loadSize == 1 and type(loadList[1]) == "table" then
+      loadList = loadList[1]
+      loadSize = table.nums(loadList)
+   end
+
+  -- dump(loadList,"loadList")
    local loadingArray = {"","","","","","","","","","","","","","","","","","","","","","","","","","","","","","",}
 
    if loadSize > 40 then
@@ -37,8 +44,11 @@ function DownManager:AsyncDownAssets(callback,...)
    for i=1,loadSize do
     	loadingArray[i] = loadList[i]
    end
-
+    --dump(loadSize,"loadSize")
+    --dump(loadingArray,"loadingArray")
    self.asyncCallBack = callback
+   --dump(self.asyncCallBack,"asyncCallBack")
+
    threadLoadAssets(function(step)
         printInfo("DownManager:AsyncDownAssets step:"..step.." asset:"..loadingArray[step])
         if step >= loadSize then

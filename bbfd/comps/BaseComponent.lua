@@ -9,13 +9,6 @@ function BaseComponent:onCreate()
     if self["closeBtn"] then
         self:addClickEventListener(self.closeBtn,handler(self,self.onClickClose))
     end
-    self:registerScriptHandler(function(eventType)
-    if eventType == "enterTransitionFinish" then
-        -- 场景被加载完成
-        --self:onEnter()
-        self:initLayout()
-    end
-    end)
 end
 
 --初始化小组件
@@ -24,7 +17,7 @@ function BaseComponent:initComponent(info)
 end
 
 --ui适配布局
-function BaseScene:initLayout()
+function BaseComponent:initLayout()
 
 end
 
@@ -41,9 +34,14 @@ function BaseComponent:onEnter()
     self:addKeybordEventListener()
 end
 
---function BaseComponent:onExit()
-
---end
+function BaseComponent:onEnterTransitionFinish()   
+    self:initLayout()
+end  
+  
+  
+function BaseComponent:onExit()   
+    BaseScene.super.onExit(self)
+end  
 
 --按钮点击事件(按下缩放效果)
 --@btnNode 按钮节点
@@ -192,7 +190,7 @@ end
 
 
 function BaseComponent:goDispose()
-    BaseComponent.super:goDispose(self)
+    BaseComponent.super.goDispose(self)
     if  self.controlTimer_ ~= nil then
         self.controlTimer_:killAll()
         self.controlTimer_ = nil

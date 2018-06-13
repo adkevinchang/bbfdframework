@@ -8,6 +8,7 @@
 --region 日志操作性能查询
 
 --打印游戏中的日志
+--本地手机可查日志使用前，请initLocalLogByC() 创建日志文件
 function loggerGameLog(fmt, ...)
     local t = {
         "[",

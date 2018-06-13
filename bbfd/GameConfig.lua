@@ -11,9 +11,18 @@ local PoolManager = require("bbfd.managers.PoolManager")
 local DownManager = require("bbfd.managers.DownManager")
 local AudioManager = require("bbfd.managers.AudioManager")
 local AnimationManager = require("bbfd.managers.AnimationManager")
+
 local bbfd = bbfd or {}
 bbfd.GAME_STATES = 190
-bbfd.VERSION = 1.1 --2018-5-12
+bbfd.VERSION = 1.2 --2018-5-12
+--[[
+1.1 基础模块mvc框架 2018-5-12
+1.2 增加模块的自动销毁 2018-6-12
+    增加View的自动缩放适配
+    增加UIManager兼容性
+    增加手机本地日志 Logger-loggerGameLog
+    增加NetManager的注册回调函数处理  caoshenghui
+]]
 bbfd.onTV = 0 --是否安装在电视上 
 bbfd.display_scalex = 1
 bbfd.display_scaley = 1

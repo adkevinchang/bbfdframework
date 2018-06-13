@@ -142,24 +142,25 @@ function DisplayUtil:autoScreen(viewbase)
     end
 
     if viewbase["Panel_scale"] ~= nil then
-        setActiveNodeScale(viewbase["Panel_scale"])
+        self:setActiveNodeScale(viewbase["Panel_scale"])
     end
 
     if self["Panel_Scale"] ~= nil then
-        setActiveNodeScale(viewbase["Panel_Scale"])
+        self:setActiveNodeScale(viewbase["Panel_Scale"])
     end
 
     if self["Panel_ScaleX"] ~= nil then
-        setActiveNodeScale(viewbase["Panel_ScaleX"])
+        self:setActiveNodeScale(viewbase["Panel_ScaleX"])
     end
 
     if self["Panel_ScaleY"] ~= nil then
-        setActiveNodeScale(viewbase["Panel_ScaleY"])
+        self:setActiveNodeScale(viewbase["Panel_ScaleY"])
     end
 end
 
 --缩放某节点到等比大小
 function DisplayUtil:nodeEqualRatio(node,subscale)
+   if node == nil then return end
    local scalenum = math.max(bbfd.display_scalex,bbfd.display_scaley)
    node:setScaleX(tonumber(node:getScaleX()+(node:getScaleX()-bbfd.display_scalex/node:getScaleX())))
    node:setScaleY(tonumber(node:getScaleY()+(node:getScaleY()-bbfd.display_scaley/node:getScaleY())))
@@ -176,6 +177,7 @@ end
 
 --缩放某节点到等比大小 遍历所有的子集
 function DisplayUtil:allChildEqualRatio(parentnode,subscale)
+   if parentnode == nil then return end
    for index = 1, #parentnode:getChildren() do  
         local nextNode = parentnode:getChildren()[index]  
         if "userdata" == type(nextNode) and nil ~= nextNode:getChildren() and 0 ~= nextNode:getChildrenCount() then  
@@ -194,6 +196,7 @@ end
 --cc.RepeatForever:create(seq1) 循环
 
 function DisplayUtil:clickEffectBSB(node,overcall)
+    if node == nil then return end
     local scale1 = cc.ScaleBy:create(0.1, 1.3)
     local scale2 = scale1:reverse()  
     local scale3 = cc.ScaleTo:create(0.1,1) 
@@ -210,6 +213,7 @@ end
 
 --渐显位置冒泡，大小，消失
 function DisplayUtil:popEffectBS(node,overcall)
+    if node == nil then return end
     --printInfo("popeffectbs")
     node:setVisible(true)
     node:setOpacity(1)
@@ -224,6 +228,7 @@ end
 
 --由大到小
 function DisplayUtil:bigToSmallEffect(node,overcall)
+    if node == nil then return end
     --printInfo("DisplayUtil:bigToSmallEffect")
     local currscale = node:getScale();
     node:setVisible(true)
@@ -255,55 +260,38 @@ end
 
 --数字翻滚
 function DisplayUtil:showNumEffect(node,nums,overcall)
---[[
-    local currnum = 0
-    local currtime = createTimer()
-    local function setnum()
-        if node == nil then return end
-        currnum = currnum + 1
-        node:setString(tostring(currnum))
-        if currnum >= tonumber(nums) then
-             node:setString(tostring(nums))
-             currtime:killAll()
-             if overcall ~= nil then
-               overcall()
-             end
-        end
+   if node == nil then return end
+   local delayact = cc.DelayTime:create(0.1)
+   local currnum = 0
+   local function setNumStr()
+      -- printInfo("currnum:"..currnum)
+       currnum = currnum + 1
+       if currnum < nums then
+            node:setString(tostring(currnum))
+       else
+            node:setString(tostring(nums))
+            node:stopAllActions()
+            if overcall ~= nil then
+                overcall()
+            end
+       end
+   end
+   
+   local call = cc.CallFunc:create(setNumStr)
+   local seq2 = cc.Sequence:create(delayact,call)
+   local seq3 = cc.RepeatForever:create(seq2)
+   node:runAction(seq3)
+end
+
+function DisplayUtil:translationEffect(node,px,py,overcall)
+    if node == nil then return end
+    local movebyact = cc.MoveBy:create(0.5, cc.p(px,py))
+    if overcall ~= nil then
+        local seq1 = cc.Sequence:create(movebyact,overcall)
+        node:runAction(seq1)
+    else
+        node:runAction(movebyact)
     end
-    currtime:start(setnum,0.2,100000)
-
-    local size = node:getContentSize()
-    local taction = {}
-    local X = size.width/2
-    local Y = size.height/2
-    local UPY = 2*Y
-    local DownY = 0
-    local move1 = cc.MoveTo:create(0.05,cc.p(X,UPY))
-    local move2 = cc.MoveTo:create(0.05,cc.p(X,DownY))
-    local move3 = cc.MoveTo:create(0.05,cc.p(X,Y))
-
-    local scale = cc.ScaleTo:create(0.2,2)
-    local scale1 = cc.ScaleTo:create(0.05,1,0.001)
-    local scale2 = cc.ScaleTo:create(0.05,1,1)
-
-    local UP =   cc.Sequence:create(move1,scale1)
-    local Down =   cc.Sequence:create(move2,scale1,scale2,move3)
-    local spawn = cc.Spawn:create(UP,seq,Down)
-    local rep = cc.Repeat:create(spawn,rtime)
---设置真值
-    local function setnum()
-        --_beginNum =  _endNum
-        node:setString(tostring(nums))
-    end
-
-    local call = cc.CallFunc:create(setnum)
-    local seq2 = cc.Sequence:create(rep,delay,call)
-        table.insert(taction,seq2)
-        table.insert(taction,scale)
-        table.insert(taction,scale2)
-    local seqaction = cc.Sequence:create(taction)
-    node:runAction(seqaction)]]
-
 end
 
 --[[

@@ -110,6 +110,7 @@ function AnimationManager:playAnimationCallBack(animation,animStartName,animEndN
             animation:unregisterAnimationEventHandler()
             delayTime = delayTime or 0.3
 
+            local timer = require("bbfd.utils.Timer"):create()
             timer:runWithDelay(function()
                 if animEndName then
                     animation:getAnimation():gotoAndPlay(animEndName)

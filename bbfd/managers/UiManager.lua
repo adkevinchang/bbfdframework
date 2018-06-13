@@ -61,7 +61,12 @@ function UiManager:initLayer(...)
            self.currLayers[i] = layer
            --layer:setPositionX(i*20)
            --layer:setPositionY(i*30)
-           self.currScene:addChild(layer);
+          -- printInfo("currLayers:"..i)
+
+           if layer:getParent() ~= self.currScene then
+             self.currScene:addChild(layer);
+           end
+
         end
     end
 end
@@ -70,7 +75,8 @@ function UiManager:initScene(scene)
     if not scene then
           error(" UiManager:initScene - invalid parameters", 0)
     end
-	
+    if self.currScene == scene then return end
+
     if(self.currScene ~= nil and self.currScene._isuse~=nil)then
         self.currScene:removeAllChildren()
         bbfd.poolMgr:putInPool(self.currScene,"CCScene")
@@ -79,18 +85,26 @@ function UiManager:initScene(scene)
     if self.currLayers ~=nil then
         if(self:getBgLayer() ~= nil and self:getBgLayer()._isuse~=nil)then
 	        self:getBgLayer():removeAllChildren()
+            self:getBgLayer():removeFromParent()
+            --printInfo("cleargetBgLayer")
 		    bbfd.poolMgr:putInPool(self:getBgLayer(),"CCLayer")
 	    end
 	    if(self:getGameLayer() ~= nil and self:getGameLayer()._isuse~=nil)then
 	       self:getGameLayer():removeAllChildren()
+           self:getGameLayer():removeFromParent()
+           --printInfo("cleargetGameLayer")
 	       bbfd.poolMgr:putInPool(self:getGameLayer(),"CCLayer")
 	    end
 	    if(self:getPanelLayer() ~= nil and self:getPanelLayer()._isuse~=nil)then
 	       self:getPanelLayer():removeAllChildren()
+           self:getPanelLayer():removeFromParent()
+           --printInfo("cleargetPanelLayer")
 	       bbfd.poolMgr:putInPool(self:getPanelLayer(),"CCLayer")
 	    end
 	    if(self:getMaskLayer() ~= nil and self:getMaskLayer()._isuse~=nil)then
 		    self:getMaskLayer():removeAllChildren()
+            self:getMaskLayer():removeFromParent()
+            --printInfo("cleargetMaskLayer")
             bbfd.poolMgr:putInPool(self:getMaskLayer(),"CCLayer")
 	    end
     end
@@ -157,13 +171,17 @@ function UiManager:showLoadAction(showed)
         return
     end
     if showed then
-        self:getPanelLayer():addChild(self.loadAction)
+        --printInfo("UiManager:showLoadAction addChild1")
+        if self.loadAction:getParent() ~= self:getPanelLayer() then
+              self:getPanelLayer():addChild(self.loadAction)
+        end
         self.loadAction:setPosition(0,display.height)
         self.loadAction:getAnimation():gotoAndPlay("start0")
         self.soundId = ccexp.AudioEngine:play2d("loading.mp3", true)
     else
+        --printInfo("UiManager:showLoadAction addChild2")
         if self.soundId ~= nil then
-            self:getPanelLayer():removeChild(self.loadAction)
+            self.loadAction:removeFromParent()
             ccexp.AudioEngine:stop(self.soundId)
         end
     end

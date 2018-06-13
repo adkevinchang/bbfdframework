@@ -132,6 +132,53 @@ function NetManager:sendPayHttp(info,params,outputFun,dataType)
     xhr:send(postData)-- 发送
 end
 
+--region caosh
+
+--发送http post请求
+--url_str   URL
+--params_tbl  要提交的参数
+--callback_func  收到返回数据时的回调函数
+function NetManager:sendHttpPost(url_str, params_tbl, callback_func)
+	local xhr = cc.XMLHttpRequest:new() --新建一个XMLHttpRequest对象
+	xhr.responseType = cc.XMLHTTPREQUEST_RESPONSE_JSON  --返回数据为字节流
+	xhr:open("POST", url_str) 
+	local function onReceived()
+        if xhr.readyState == 4 and (xhr.status >= 200 and xhr.status < 207) then
+	        local response = json.decode(xhr.response) --获得响应数据
+			dump(response,"post响应数据")
+	        if callback_func~=nil then
+		        callback_func(response)
+	        end
+        end
+        xhr:unregisterScriptHandler()
+	end
+	xhr:registerScriptHandler(onReceived) --注册脚本方法回调
+	xhr:send(json.encode(params_tbl))  --发送
+end
+
+--发送http get请求
+--url_str   URL
+--callback_func  收到返回数据时的回调函数
+function NetManager:sendHttpGet(url_str, callback_func)
+	local xhr = cc.XMLHttpRequest:new() --新建一个XMLHttpRequest对象
+	xhr.responseType = cc.XMLHTTPREQUEST_RESPONSE_JSON  --返回数据为字节流
+	xhr:open("GET", url_str) 
+	local function onReceived()
+        if xhr.readyState == 4 and (xhr.status >= 200 and xhr.status < 207) then
+	        local response = json.decode(xhr.response) --获得响应数据 
+			dump(response,"get响应数据")
+	        if callback_func~=nil then
+		        callback_func(response)
+	        end
+        end
+        xhr:unregisterScriptHandler()
+	end
+	xhr:registerScriptHandler(onReceived) --注册脚本方法回调
+	xhr:send()  --发送
+end
+
+--endregion
+
 return NetManager
 
 --endregion
