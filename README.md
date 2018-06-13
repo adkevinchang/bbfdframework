@@ -1,6 +1,5 @@
 # bbfdframework
 bbfd
---[[
 1.1 基础模块mvc框架 2018-5-12
 
 1.2 增加模块的自动销毁 2018-6-12
@@ -13,4 +12,3 @@ bbfd
     
     增加NetManager的注册回调函数处理  caoshenghui
     
-]]
