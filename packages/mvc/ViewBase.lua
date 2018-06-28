@@ -2,7 +2,9 @@
 --region ViewBase cocos
 --ui 布局 根据不同的设备和分辨率做调整,不同状态的显示。
 --device
+-- bbfdid对象唯一id
 local ViewBase = class("ViewBase", cc.Node)
+ViewBase.BbfdId = 0
 
 --解析资源的节点
 local function parseChildrenName(self,parent) 
@@ -15,9 +17,13 @@ local function parseChildrenName(self,parent)
 end
 
 function ViewBase:ctor(app,name,...)
+    printInfo("ViewBase:ctor")
     self:enableNodeEvents()
     self.app_ = app
     self.name_ = name
+    self.isExit_ = false
+    ViewBase.BbfdId = ViewBase.BbfdId + 1
+    self.bbfdId = "v"..ViewBase.BbfdId
     -- check CSB resource file
     local res = rawget(self.class, "RESOURCE_FILENAME")
     if res then
@@ -101,8 +107,9 @@ function ViewBase:findNodeByName(root, name)
 end
 
 function ViewBase:onExit()  
-   self:goDispose()
-   self:evtMgr():Brocast(bbfd.EVENT_VIEW_ONEXIT)
+   self.isExit_ = true
+   printInfo("ViewBase:onExit:"..self.bbfdId)
+   self:evtMgr():Brocast(bbfd.EVENT_VIEW_ONEXIT,self)
 end  
 
 --endregion
@@ -118,6 +125,9 @@ function ViewBase:setDestroy(handler)
 end
 --region ViewBase - yzyc gameApp 
 
+function ViewBase:isExit()
+   return  self.isExit_
+end
 
 --获取操作管理类
 function ViewBase:uiMgr()

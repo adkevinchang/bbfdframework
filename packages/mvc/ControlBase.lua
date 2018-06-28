@@ -5,6 +5,7 @@
 --处理用户交互操作，已经数据交互逻辑，并管理ui逻辑
 
 local ControlBase = class("ControlBase")
+ControlBase.BbfdId = 0
 
 --解析资源的节点
 local function parseChildrenName(self,parent) 
@@ -20,6 +21,8 @@ function ControlBase:ctor(cview,cmodel)
     self.view_ = cview
     self.model_ = cmodel
     self.isFunMod_ = true
+    ControlBase.BbfdId = ControlBase.BbfdId + 1
+    self.bbfdId = "c"..ControlBase.BbfdId
 
     local binding = rawget(self.class, "RESOURCE_BINDING")
     if  self:getView() and binding then
@@ -39,6 +42,8 @@ function ControlBase:initCtor(cview,cmodel)
     local binding = rawget(self.class, "RESOURCE_BINDING")
     if  self:getView() and binding then
         self:createViewBinding(binding)
+    end
+    if self:getView() and self:getView():getResourceNode() then
         parseChildrenName(self,self:getView():getResourceNode())
     end
 
@@ -47,8 +52,8 @@ end
 
 --初始化控制组件的view交互事件
 function ControlBase:onCreate()
-    self.viewonexithandler = handler(self,self.goDispose)
-    self:evtMgr():AddListener(bbfd.EVENT_VIEW_ONEXIT,self.viewonexithandler)
+    self.viewonexithandler_ = handler(self,self.onExitHandle)
+    self:evtMgr():AddListener(bbfd.EVENT_VIEW_ONEXIT,self.viewonexithandler_)
 
 end
 
@@ -72,22 +77,21 @@ end
 --self.view_ = cview
 -- self.model_ = cmodel
 
-function ControlBase:initFunMod(viewname,modelvo)
- --printInfo("ControlBase:initFunModa"..self.view_)
-   local viewtmp = self:initModView(viewname)
+function ControlBase:initFunMod(viewname,modelvo,...)
+   printInfo("ControlBase:initFunModa")
+   local viewtmp = self:initModView(viewname,...)
    local modeltmp = self:initModModel(modelvo)
    --子类重构
    self:initCtor(viewtmp,modeltmp)
 
-   --printInfo("ControlBase:initFunModa"..self.view_)
-   --printInfo("ControlBase:initFunModb"..self.model_)
+   printInfo("ControlBase:initFunModa")
    --XXX.super.initFunMod(self,viewname,modelvo)
 end
 
-function ControlBase:initModView(viewname)
+function ControlBase:initModView(viewname,...)
     assert(self.modName_ , "ControlBase initModView() -  don't find "..self.modName_)
     local classpath = "app.views."..self.modName_.."."..self.modName_.."View"
-    local viewtmp = require(classpath):create(nil,viewname)
+    local viewtmp = require(classpath):create(nil,viewname,...)
     assert(viewtmp, "ControlBase initModView() -  don't find "..classpath)
     return viewtmp
 end
@@ -113,20 +117,36 @@ function ControlBase:getModName()
    return self.modName_
 end
 
+function ControlBase:onExitHandle(view)
+printInfo("ControlBase:onExitHandle:"..self.bbfdId)
+      if not tolua.isnull(self:getView()) and not tolua.isnull(view) then
+        if self:getView() == view then
+           self:goDispose()
+        end
+     end
+end
+
 --清除所有的内存和监听事件
 --清除所有的常量
 --view的移除操作不可以写在销毁方法中
 function ControlBase:goDispose()
-    if self.viewonexithandler then
-        self:evtMgr():removeListener(bbfd.EVENT_VIEW_ONEXIT,self.viewonexithandler)
+    if self.viewonexithandler_ then
+        self:evtMgr():removeListener(bbfd.EVENT_VIEW_ONEXIT,self.viewonexithandler_)
     end
     
     if self.destroy_ then 
         self.destroy_()
     end
+
     --not tolua.isnull(self:getView())
     if not tolua.isnull(self:getView()) then
        self:getView():goDispose()
+       --dump(self:getView():getParent())
+       if not tolua.isnull(self:getView():getParent()) then
+           if not self:getView():isExit() then
+               self:getView():removeFromParent()
+           end
+       end
        self.view_ = nil
     end
 
@@ -140,7 +160,7 @@ function ControlBase:goDispose()
 
     --根据自己模块的需求使用垃圾回收
     if type(DEBUG) == "number" or DEBUG == 2 then
-        collectgarbage("collect")
+        --collectgarbage("collect")
     end
     printInfo("当前内存:"..collectgarbage("count"))
 end

@@ -4,10 +4,14 @@
 --处理用户本地数据与远程数据，并与逻辑类交互
 --kevin
 
-local ModelBase = class("ModelBase");
+local ModelBase = class("ModelBase")
+ModelBase.BbfdId = 0
 
 function ModelBase:ctor(vo)
+    printInfo("ModelBase:ctor")
     self.vo_ = vo;
+    ModelBase.BbfdId = ModelBase.BbfdId + 1
+    self.bbfdId = "m"..ModelBase.BbfdId
     if self.onCreate then self:onCreate() end
 end
 
