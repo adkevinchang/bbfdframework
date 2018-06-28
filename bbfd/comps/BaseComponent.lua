@@ -40,7 +40,7 @@ end
   
   
 function BaseComponent:onExit()   
-    BaseScene.super.onExit(self)
+    BaseComponent.super.onExit(self)
 end  
 
 --按钮点击事件(按下缩放效果)

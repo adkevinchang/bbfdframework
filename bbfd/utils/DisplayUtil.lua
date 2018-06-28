@@ -158,6 +158,17 @@ function DisplayUtil:autoScreen(viewbase)
     end
 end
 
+
+--相同的缩放比例
+--tnode 目标对象
+--cnode 复制对象
+function DisplayUtil:nodeSomeScale(tnode,cnode)
+    if not tolua.isnull(tnode) == nil then return end
+    if not tolua.isnull(cnode) == nil then return end
+    cnode:setScaleX(tnode:getScaleX())
+    cnode:setScaleY(tnode:getScaleY())
+end
+
 --缩放某节点到等比大小
 function DisplayUtil:nodeEqualRatio(node,subscale)
    if node == nil then return end
@@ -224,6 +235,28 @@ function DisplayUtil:popEffectBS(node,overcall)
     --local  opacity = cc.FadeOut:create(2)
     local  action = cc.Sequence:create(fadein,move,scale1,finish)
     node:runAction(action)
+end
+
+--快速变大还原
+function DisplayUtil:toBigBackEffect(node,overcall)
+    if tolua.isnull(node) then return end
+    local currscale = node:getScale();
+    node:setVisible(true)
+    node:setOpacity(1)
+    local  fadein = cc.FadeIn:create(0.4)
+    local  scale1 = cc.ScaleBy:create(0.2,1.3)
+    local  scale2 = scale1:reverse()
+    local  delayact = cc.DelayTime:create(3)
+
+    if overcall ~= nil then
+         local  finish = cc.CallFunc:create(overcall)
+         local  action = cc.Sequence:create(fadein,scale1,scale2,delayact,finish)
+         node:runAction(action)
+    else
+         local  action = cc.Sequence:create(fadein,scale1,scale2,delayact)
+         node:runAction(action)
+    end
+     --dump(node)
 end
 
 --由大到小

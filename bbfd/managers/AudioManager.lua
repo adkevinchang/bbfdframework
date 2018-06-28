@@ -33,10 +33,10 @@ end
 
 -- 播放背景音乐
 function AudioManager:playBackgroundMusic(filePath,loop)
-
     printInfo("ddddddddddd  "..filePath)
     self:stopMusic()
-    self:playMusic(filePath,loop)
+    local musicid = self:playMusic(filePath,loop)
+    return musicid
 end
 
 -- 停止音乐

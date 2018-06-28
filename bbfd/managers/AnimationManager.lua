@@ -40,13 +40,13 @@ function AnimationManager:loadDragonBonesFiles(filePaths)
     if not self.dbFactory then return end
 
     for _, filePath in pairs(filePaths) do
-        print("AnimationManager:loadDragonBonesFiles  path:" .. filePath .. "\n")
-
+        printInfo("AnimationManager:loadDragonBonesFiles  path:" .. filePath .. "\n")
         local name = string.gsub(filePath, "/", "-")
         if self.dbFactory:hasDragonBones(name) == false then
             self.dbFactory:loadDragonBonesData(filePath.."/skeleton.xml", name)
             self.dbFactory:loadTextureAtlas(filePath.."/texture.xml", name) 
         end
+
     end
 end
 
@@ -122,6 +122,10 @@ function AnimationManager:playAnimationCallBack(animation,animStartName,animEndN
             end,delayTime)
         end
     end)
+end
+
+function AnimationManager:getAnimation(animName)
+    return self.dbFactory:buildArmatureNode(animName)
 end
 
 --[[

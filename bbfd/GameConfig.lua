@@ -37,7 +37,7 @@ bbfd.animMgr  = AnimationManager:getInstance()
 --scenes
 bbfd.baseScene = require "bbfd.scenes.BaseScene"
 bbfd.baseSceneControl = require "bbfd.scenes.BaseSceneControl"
-
+bbfd.baseComponent = require "bbfd.comps.BaseComponent"
 bbfd.moduleBase = require "bbfd.core.ModuleBase"
 
 --显示布局常量 layout

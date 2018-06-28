@@ -9,6 +9,7 @@ local BaseScene = class("BaseScene",cc.load("mvc").ViewBase)
 
 function BaseScene:showWithScene(transition, time, more)
     self:setVisible(true)
+    self.isInitScene_ = false
    --[[ self:registerScriptHandler(function(eventType)
     if eventType == "enterTransitionFinish" then
         self:initLayout()
@@ -25,31 +26,41 @@ function BaseScene:changGameScene()
 end
 
 function BaseScene:initUi()
-   
+   self.isInitScene_ = true
+
 end
 
 function BaseScene:onEnter()   
-   
+   printInfo("BaseScene:onEnter:"..self.bbfdId)
 end  
   
   
-function BaseScene:onEnterTransitionFinish()   
-    self:initLayout()
+function BaseScene:onEnterTransitionFinish()  
+printInfo("BaseScene:onEnterTransitionFinish"..self.bbfdId) 
+    self:evtMgr():Brocast(bbfd.EVENT_VIEW_ONENTER,self)
+    --self:initLayout()
 end  
   
   
 function BaseScene:onExit()   
     BaseScene.super.onExit(self)
+    printInfo("BaseScene:onExit"..self.bbfdId)
 end  
   
-  
+function BaseScene:isInitScene()
+    if self.isInitScene_ == nil then
+       self.isInitScene_ = false
+    end
+    return self.isInitScene_
+end
+
 function BaseScene:onExitTransitionStart()   
-  
+    printInfo("BaseScene:onExitTransitionStart"..self.bbfdId)
 end  
   
   
 function BaseScene:cleanup()   
-    
+    printInfo("BaseScene:cleanup"..self.bbfdId)
 end 
 
 return BaseScene;

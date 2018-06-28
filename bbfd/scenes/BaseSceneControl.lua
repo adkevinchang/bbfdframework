@@ -4,15 +4,18 @@
 --kevin
 local BaseSceneControl = class("BaseSceneControl",cc.load("mvc").ControlBase);
 
---进入场景
-function BaseSceneControl:goEnter()
-    --添加键盘事件
-    self:addKeybordEventListener()
+function BaseSceneControl:onCreate()
+    BaseSceneControl.super.onCreate(self)
+    self.viewonenterhandler_ = handler(self,self.goEnter)
+    self:evtMgr():AddListener(bbfd.EVENT_VIEW_ONENTER,self.viewonenterhandler_)
 end
 
---退出场景
-function BaseSceneControl:goExit()
-   
+--进入场景
+function BaseSceneControl:goEnter(view)
+printInfo(" BaseSceneControl:goEnter:"..self.bbfdId)
+    --添加键盘事件
+    self:addKeybordEventListener()
+
 end
 
 -- 添加键盘事件
@@ -81,6 +84,9 @@ end
 
 
 function BaseSceneControl:goDispose()
+    if self.viewonenterhandler_ then
+        self:evtMgr():removeListener(bbfd.EVENT_VIEW_ONENTER,self.viewonenterhandler_)
+    end
     if  self.controlTimer_ then
         self.controlTimer_:killAll()
     end

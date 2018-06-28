@@ -16,12 +16,12 @@ end
 --[[
 modename:功能模块的文件夹名
 ]]
-function StartupGameControl(modename,viewname,modelvo)
+function StartupGameControl(modename,viewname,modelvo,...)
     local control = require("app.views."..modename.."."..modename.."Control"):create()
     --print(ctrlclassstr)
     assert(control, "functions StartupGameControl() -  don't find "..modename)
     control:setModName(modename)
-    control:initFunMod(viewname,modelvo)
+    control:initFunMod(viewname,modelvo,...)
     return control
 end
 

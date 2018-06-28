@@ -35,7 +35,7 @@ function UiManager:initLayer(...)
     if not self.currScene then
           error(" UiManager:initLayer - currScene is nil", 0)
     end
-    if self.currScene then
+    if not tolua.isnull(self.currScene) then
         local params = {...}
         local c = #params
         self.currLayers = self.currLayers or {}
@@ -62,7 +62,7 @@ function UiManager:initLayer(...)
            --layer:setPositionX(i*20)
            --layer:setPositionY(i*30)
           -- printInfo("currLayers:"..i)
-
+           self.currLayers[i]:removeAllChildren()
            if layer:getParent() ~= self.currScene then
              self.currScene:addChild(layer);
            end
@@ -72,48 +72,137 @@ function UiManager:initLayer(...)
 end
 
 function UiManager:initScene(scene)
-    if not scene then
+    if tolua.isnull(scene) then
           error(" UiManager:initScene - invalid parameters", 0)
     end
     if self.currScene == scene then return end
-
-    if(self.currScene ~= nil and self.currScene._isuse~=nil)then
-        self.currScene:removeAllChildren()
-        bbfd.poolMgr:putInPool(self.currScene,"CCScene")
+    
+     --旧场景和图层处理
+    if not tolua.isnull(self.currScene) then
+       self.currScene:removeAllChildren()
+       if self.currScene._isuse ~= nil then --是否是缓存池场景
+            if self.currScene._isuse == 1 then --已经在使用的场景
+                bbfd.poolMgr:putInPool(self.currScene,"CCScene")
+            end
+       end
+       self.currScene = nil
     end
-	
+    
     if self.currLayers ~=nil then
-        if(self:getBgLayer() ~= nil and self:getBgLayer()._isuse~=nil)then
+        if(not tolua.isnull(self:getBgLayer()))then
 	        self:getBgLayer():removeAllChildren()
             self:getBgLayer():removeFromParent()
-            --printInfo("cleargetBgLayer")
-		    bbfd.poolMgr:putInPool(self:getBgLayer(),"CCLayer")
+            if self:getBgLayer()._isuse == 1 then --已经在使用的场景
+                bbfd.poolMgr:putInPool(self:getBgLayer(),"CCLayer")
+            end
 	    end
-	    if(self:getGameLayer() ~= nil and self:getGameLayer()._isuse~=nil)then
+	    if(not tolua.isnull(self:getGameLayer()))then
 	       self:getGameLayer():removeAllChildren()
            self:getGameLayer():removeFromParent()
-           --printInfo("cleargetGameLayer")
-	       bbfd.poolMgr:putInPool(self:getGameLayer(),"CCLayer")
+           if self:getGameLayer()._isuse == 1 then --已经在使用的场景
+	            bbfd.poolMgr:putInPool(self:getGameLayer(),"CCLayer")
+           end
 	    end
-	    if(self:getPanelLayer() ~= nil and self:getPanelLayer()._isuse~=nil)then
+	    if(not tolua.isnull(self:getPanelLayer()))then
 	       self:getPanelLayer():removeAllChildren()
            self:getPanelLayer():removeFromParent()
-           --printInfo("cleargetPanelLayer")
-	       bbfd.poolMgr:putInPool(self:getPanelLayer(),"CCLayer")
+           if self:getPanelLayer()._isuse == 1 then --已经在使用的场景
+	           bbfd.poolMgr:putInPool(self:getPanelLayer(),"CCLayer")
+           end
 	    end
-	    if(self:getMaskLayer() ~= nil and self:getMaskLayer()._isuse~=nil)then
+	    if(not tolua.isnull(self:getMaskLayer()))then
 		    self:getMaskLayer():removeAllChildren()
             self:getMaskLayer():removeFromParent()
-            --printInfo("cleargetMaskLayer")
-            bbfd.poolMgr:putInPool(self:getMaskLayer(),"CCLayer")
+            if self:getMaskLayer()._isuse == 1 then --已经在使用的场景
+                bbfd.poolMgr:putInPool(self:getMaskLayer(),"CCLayer")
+            end
 	    end
     end
-	
-	self.currScene = nil
     self.currScene = scene
     self:initLayer("mainbg","maingame","mainmask","mianpanel")
     self:initLoadAction()
     self:showLoadAction(false)
+end
+
+--初始化过渡动画场景
+function UiManager:initTraScene(scene,time)
+   if tolua.isnull(scene) then
+          error(" UiManager:initScene - invalid parameters", 0)
+    end
+   if self.currScene == scene then return end
+   if time == nil then
+      self:initScene(scene)
+      return 
+   end
+   --旧场景和图层处理
+   if not tolua.isnull(self.currScene) then
+       self.currSceneTemp = self.currScene
+    end
+    
+    if self.currLayers ~=nil then
+        if(not tolua.isnull(self:getBgLayer()))then
+            self.bgLayerTemp = self:getBgLayer()
+	    end
+	    if(not tolua.isnull(self:getGameLayer()))then
+	       self.gameLayerTemp = self:getGameLayer()
+	    end
+	    if(not tolua.isnull(self:getPanelLayer()))then
+	       self.panelLayerTemp = self:getPanelLayer()
+	    end
+	    if(not tolua.isnull(self:getMaskLayer()))then
+		    self.maskLayerTemp = self:getMaskLayer()
+	    end
+   end
+
+   self:controlTimer():runWithDelay(function ()
+       if not tolua.isnull(self.currSceneTemp) then
+           self.currSceneTemp:removeAllChildren()
+           if self.currSceneTemp._isuse ~= nil then --是否是缓存池场景
+                if self.currSceneTemp._isuse == 1 then --已经在使用的场景
+                    bbfd.poolMgr:putInPool(self.currSceneTemp,"CCScene")
+                end
+           end
+           self.currSceneTemp = nil
+       end
+    
+       if(not tolua.isnull(self.bgLayerTemp))then
+                self.bgLayerTemp:removeAllChildren()
+                self.bgLayerTemp:removeFromParent()
+                if self.bgLayerTemp._isuse == 1 then --已经在使用的图层
+                    bbfd.poolMgr:putInPool(self.bgLayerTemp,"CCLayer")
+                end
+                self.bgLayerTemp = nil
+	        end
+	        if(not tolua.isnull(self.gameLayerTemp))then
+	            self.gameLayerTemp:removeAllChildren()
+                self.gameLayerTemp:removeFromParent()
+                if self.gameLayerTemp._isuse == 1 then --已经在使用的图层
+                    bbfd.poolMgr:putInPool(self.gameLayerTemp,"CCLayer")
+                end
+                self.gameLayerTemp = nil
+	        end
+	        if(not tolua.isnull(self.panelLayerTemp))then
+	            self.panelLayerTemp:removeAllChildren()
+                self.panelLayerTemp:removeFromParent()
+                if self.panelLayerTemp._isuse == 1 then --已经在使用的图层
+                    bbfd.poolMgr:putInPool(self.panelLayerTemp,"CCLayer")
+                end
+                self.panelLayerTemp = nil
+	        end
+	        if(not tolua.isnull(self.maskLayerTemp))then
+		        self.maskLayerTemp:removeAllChildren()
+                self.maskLayerTemp:removeFromParent()
+                if self.maskLayerTemp._isuse == 1 then --已经在使用的图层
+                    bbfd.poolMgr:putInPool(self.maskLayerTemp,"CCLayer")
+                end
+                self.maskLayerTemp = nil
+	        end
+   end,time)
+
+   self.currScene = scene
+   self:initLayer("mainbg","maingame","mainmask","mianpanel")
+   self:initLoadAction()
+   self:showLoadAction(false)
 end
 
 function UiManager:getBgLayer()
@@ -170,9 +259,10 @@ function UiManager:showLoadAction(showed)
         error(" UiManager:showLoading - no loadAction , Please UiManager:initScene(scene)", 0)
         return
     end
+    self.loadAction:setVisible(showed)
     if showed then
         --printInfo("UiManager:showLoadAction addChild1")
-        if self.loadAction:getParent() ~= self:getPanelLayer() then
+        if self.loadAction:getParent() == nil then
               self:getPanelLayer():addChild(self.loadAction)
         end
         self.loadAction:setPosition(0,display.height)
@@ -263,7 +353,13 @@ function UiManager:closeAllUi()
     self.curSceneOpenUiList = {}
 end
 
-
+--增加定时器
+function UiManager:controlTimer()
+    if  self.controlTimer_ == nil then
+        self.controlTimer_ = require("bbfd.utils.Timer"):create()
+    end
+    return self.controlTimer_ 
+end
 
 return UiManager
 --endregion

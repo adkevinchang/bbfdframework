@@ -20,7 +20,7 @@ end
 function PoolManager:init()
     --printInfo("PoolManager:init")
     PoolManager.instance:poolnew("CCScene",5)
-    PoolManager.instance:poolnew("CCLayer",5)
+    PoolManager.instance:poolnew("CCLayer",10)
 end
 
 --[[
@@ -47,8 +47,8 @@ function PoolManager:poolnew(cpname,size)
    end
 
    PoolManager.pmap[cpname] = pool
-   --printInfo(" PoolManager:poolnew1:"..cpname)
-   --printInfo(" PoolManager:poolnew2:"..size)
+   printInfo(" PoolManager:poolnew1:"..pool[1]._index)
+   printInfo(" PoolManager:poolnew2:"..pool[1]._isuse)
   -- printInfo(" PoolManager:poolnew3:"..#pool)
 end
 

@@ -31,7 +31,7 @@ function EventManager:AddListener(event,handle)
     
     if not EventManager.events[event] then
         EventManager.events[event] =  EventLib:new(event)
-        printInfo("EventManager:AddListener"..event)
+       -- printInfo("EventManager:AddListener"..event)
     end
 
     EventManager.events[event]:connect(handle)
@@ -42,7 +42,7 @@ end
 --处理函数临时缓存起来 self.currStartPlayHandler = handler(self,self.startPlayHander)
 function EventManager:removeListener(event,handle)
     if not EventManager.events[event] then
-        error("remove"..event.."has no event")
+        --error("remove"..event.."has no event")
     else
         --printInfo("removeListener:"..event)
         EventManager.events[event]:disconnect(handle)
@@ -55,7 +55,7 @@ function EventManager:Brocast(event,...)
     if not EventManager.events[event] then
         --error("Brocast"..event.."has no event");
     else
-        printInfo("EventManager:Brocast"..event)
+       -- printInfo("EventManager:Brocast"..event)
         EventManager.events[event]:fire(...);
     end
 end
