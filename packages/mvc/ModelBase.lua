@@ -8,7 +8,7 @@ local ModelBase = class("ModelBase")
 ModelBase.BbfdId = 0
 
 function ModelBase:ctor(vo)
-    printInfo("ModelBase:ctor")
+    --printInfo("ModelBase:ctor")
     self.vo_ = vo;
     ModelBase.BbfdId = ModelBase.BbfdId + 1
     self.bbfdId = "m"..ModelBase.BbfdId

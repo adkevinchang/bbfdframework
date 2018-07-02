@@ -17,7 +17,7 @@ local function parseChildrenName(self,parent)
 end
 
 function ViewBase:ctor(app,name,...)
-    printInfo("ViewBase:ctor")
+    --printInfo("ViewBase:ctor")
     self:enableNodeEvents()
     self.app_ = app
     self.name_ = name

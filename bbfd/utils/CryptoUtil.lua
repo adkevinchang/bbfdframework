@@ -16,10 +16,10 @@ classno:编辑唯一码。11位正整数数字
 ]]
 
 function CryptoUtil:encryptBbfdSn(classno)
-   local sntool = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!#$%&()*+-:;<=>?@[]_{|}~"
+   local sntool = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!#$%&()*+-:;=?@[]_{|}~"
    --原数加20121231
    --原数加加倍生成本数
-   --倒序本数取值 如果2位大于76，否则取1位
+   --倒序本数取值 如果2位大于73，否则取1位
    local yuannum = classno + 20121231
    --printInfo("原数:"..tostring(yuannum))
    local bennum = yuannum * 2
@@ -33,13 +33,13 @@ function CryptoUtil:encryptBbfdSn(classno)
    local sntable = {}
    for i=1,benlen do
    		currstrnum,currindex = self:getCurrPosNum(benstr,currindex)
-        --printInfo(currstrnum.."//"..currindex)
+       printInfo(currstrnum.."//"..currindex)
         if currindex <= 0 then
             if currstrnum >= 0 then
                     local resultstr = string.sub(sntool,currstrnum+1,currstrnum+1)
-                    --dump(resultstr)
+                    dump(resultstr)
                     if resultstr ~= nil then
-                        --printInfo("resultstr"..resultstr)
+                        printInfo("resultstr"..resultstr)
                         table.insert(sntable,resultstr)
                     end
             end
@@ -51,9 +51,9 @@ function CryptoUtil:encryptBbfdSn(classno)
         else
             if currstrnum >= 0 then
                 local resultstr = string.sub(sntool,currstrnum+1,currstrnum+1)
-                --dump(resultstr)
+                dump(resultstr)
                 if resultstr ~= nil then
-                    --printInfo("resultstr"..resultstr)
+                    printInfo("resultstr"..resultstr)
                     table.insert(sntable,resultstr)
                 end
             end
@@ -75,17 +75,23 @@ currpos 当前位置
 function CryptoUtil:getCurrPosNum(contentstr,pos)
     local substr = string.sub(contentstr,pos-1,pos)
     local currpos = pos - 2
-    --printInfo("substr:"..substr)
+    printInfo("substr:"..substr)
     local subnum = tonumber(substr)
-    if subnum > 75 then
+    if subnum == 0 and string.len(substr) == 2 then
         substr = string.sub(contentstr,pos,pos)
         currpos = pos - 1
         subnum = tonumber(substr)
+    else
+        if subnum > 73 then
+            substr = string.sub(contentstr,pos,pos)
+            currpos = pos - 1
+            subnum = tonumber(substr)
+        end
     end
     if string.len(substr) <= 0 then
         subnum = -1
     end
-    --printInfo("substr2:"..substr)
+    printInfo("substr2:"..substr)
 	return subnum,currpos
 end
 
@@ -94,7 +100,8 @@ classsn:密钥（由字符和符号构成）
 yuannum:班级唯一码
 ]]
 function CryptoUtil:decryptBbfdSn(classsn)
-   local sntool = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!#$%&()*+-:;<=>?@[]_{|}~"
+   dump(classsn)
+   local sntool = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!#$%&()*+-:;=?@[]_{|}~"
    local snlen = string.len(classsn)
    --printInfo(classsn)
    local bennum = 0
@@ -103,12 +110,17 @@ function CryptoUtil:decryptBbfdSn(classsn)
    for i=1,snlen do
       local snsubstr= string.sub(classsn,i,i)
       local snindex = string.find(sntool,snsubstr)
-      --printInfo(snsubstr.."//"..snindex)
+      printInfo(snsubstr.."//"..snindex)
       benstr = tostring(snindex-1)..benstr
+      printInfo(benstr)
    end
+  
    bennum = tonumber(benstr)
+   printInfo(bennum)
+   
    bennum = bennum/2
    local yuannum = bennum - 20121231
+   printInfo(bennum)
    --本数倒序原数
    --原数减倍
    --原数减20121231

@@ -78,13 +78,13 @@ end
 -- self.model_ = cmodel
 
 function ControlBase:initFunMod(viewname,modelvo,...)
-   printInfo("ControlBase:initFunModa")
+   --printInfo("ControlBase:initFunModa")
    local viewtmp = self:initModView(viewname,...)
    local modeltmp = self:initModModel(modelvo)
    --子类重构
    self:initCtor(viewtmp,modeltmp)
 
-   printInfo("ControlBase:initFunModa")
+   --printInfo("ControlBase:initFunModa")
    --XXX.super.initFunMod(self,viewname,modelvo)
 end
 
@@ -96,11 +96,12 @@ function ControlBase:initModView(viewname,...)
     return viewtmp
 end
 
+--模块中数据模块可以为空
 function ControlBase:initModModel(modelvo)
     assert(self.modName_ , "ControlBase initModModel() -  don't find "..self.modName_)
     local classpath = "app.views."..self.modName_.."."..self.modName_.."Model"
     local modeltmp = require(classpath):create(modelvo)
-    assert(modeltmp, "ControlBase initModModel() -  don't find "..classpath)
+    --assert(modeltmp, "ControlBase initModModel() -  don't find "..classpath)
     return modeltmp
 end
 

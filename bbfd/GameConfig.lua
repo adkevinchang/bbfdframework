@@ -24,6 +24,7 @@ bbfd.VERSION = 1.2 --2018-5-12
     增加NetManager的注册回调函数处理  caoshenghui
 ]]
 bbfd.onTV = 0 --是否安装在电视上 
+bbfd.pcUuid = "00000000"
 bbfd.display_scalex = 1
 bbfd.display_scaley = 1
 bbfd.uiMgr   = UiManager:getInstance()
