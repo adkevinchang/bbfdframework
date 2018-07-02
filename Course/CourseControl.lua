@@ -17,9 +17,8 @@ function CourseControl:onCreate()
    --主事件课程完成
    self.couseEventFinish_ = handler(self,self.couseEventFinishHandle)
    self:evtMgr():AddListener(bbfd.COURSE_EVENT.FINISH,self.couseEventFinish_)
-  
+   printInfo("CourseControl:onCreate"..self.bbfdId)
    self:setCourseName(bbfd.courseMgr:getCurrCourseNm()..BrainsData.Current.SceneName)
-   printInfo("CourseControl:onCreate"..self:getCourseName())
 end
 
 function CourseControl:initFunMod(viewname,modelvo,...)
@@ -34,12 +33,12 @@ end
 -----------------------------------------------------------------------------基础课程模块初始化
 --goEnter可多次进入 判断view的初始化即可
 function CourseControl:goEnter(view)
-    printInfo("CourseControl:goEnter"..self:getCourseName())
+    printInfo("CourseControl:goEnter")
     if not tolua.isnull(self:getView()) and not tolua.isnull(view) then
         CourseControl.super.goEnter(self) 
-        printInfo("CourseControl:goEnter1"..self:getCourseName())
+        printInfo("CourseControl:goEnter1")
         if self:getView():isInitScene() == false then
-        printInfo("CourseControl:goEnter2"..self:getCourseName())
+        printInfo("CourseControl:goEnter2")
             self:initCourseUI()
             self:initCourseInfo()
             self:initCourseUpdate()
@@ -64,14 +63,14 @@ function CourseControl:initCourseUI()
     --操作按钮
      self:getView():initUi()
      if self:courseMgr():getIdentity() == bbfd.COURSE_IDENTITY.TEACHER then
-        printInfo("CourseControl:initCourseUI0"..self:getCourseName())
-       -- local tc = createGameControl("app.views.mainlineTask.teacher.TeacherControl")
-        printInfo("CourseControl:initCourseUI1"..self:getCourseName())
-       -- tc:showInScene(self:uiMgr():getCurScene())
-        printInfo("CourseControl:initCourseUI"..self:getCourseName())
-       -- self:courseMgr():setCourseMenu(2)
+        printInfo("CourseControl:initCourseUI0")
+        local tc = createGameControl("app.views.mainlineTask.teacher.TeacherControl")
+        printInfo("CourseControl:initCourseUI1")
+        tc:showInScene(self:uiMgr():getCurScene())
+        printInfo("CourseControl:initCourseUI")
     end
 end
+
 
 ----------------------------------------------------------------------------------课程基础信息初始化
 --课程里的所有演员，所有属性字段管理
@@ -134,7 +133,7 @@ function CourseControl:initCourseInfo()
 	end
 
     if self.bonesFile ~= nil then
-        self:animMgr():loadDragonBonesFiles(self.bonesFile)
+		self:animMgr():loadDragonBonesFiles(self.bonesFile)
         for i=1,#self.bonesFile do
             printInfo("self.armatureName :"..i.." :"..self.armatureName[i])
             self.dbnode[i] = self:animMgr():getAnimation(self.armatureName[i])
@@ -142,7 +141,6 @@ function CourseControl:initCourseInfo()
             self["Panel_Bones"..i]:addChild(self.dbnode[i])
             DisplayUtil:nodeEqualRatio(self.dbnode[i])
             self.dbnode[i]:setPosition(self["bonePos"..i]:getPositionX(),self["bonePos"..i]:getPositionY())
-            self.dbnode[i]:registerAnimationEventHandler(handler(self,self.bonesEvent))
             self["dbnode"..i] = self.dbnode[i]
         end
     end
@@ -164,6 +162,9 @@ function CourseControl:initCourseInfo()
             if self["btnWaitTouch"..i] ~= nil then
                 self["btnWaitTouch"..i]:setTag(i)
                 self["btnWaitTouch"..i]:addTouchEventListener(handler(self,self.onClickExecEventHandle))
+                --printInfo("btnWaitTouch"..i)
+                --self["btnWaitTouch"..i]:setTouchEnabled()
+                --dump()
             end
         end
     end
@@ -190,6 +191,29 @@ function CourseControl:initCourseInfo()
         if self["interactButton"..i] ~= nil then
             self["interactButton"..i]:setTag(i)
             self["interactButton"..i]:addTouchEventListener(handler(self,self.onInteractTouchHandle))
+        end
+    end
+
+
+	--------------------------------------------------------------------------------
+    --说话动画
+    --------------------------------------------------------------------------------
+	local talkFile = self:getModel():getTalkFile()
+	if talkFile ~= nil then
+        self.talkNode = {}
+		self:animMgr():loadDragonBonesFile(talkFile)
+
+		local talkIsActive = self:getModel():getTalkIsActive()
+		local talkArmature = self:getModel():getTalkArmature()
+        for i=1,#talkIsActive do
+            if talkIsActive[i] == true then
+                self.talkNode[i] = {}
+                self.talkNode[i][1] = self:animMgr():addAnimation(self.dbnode[i],talkArmature[1])
+                self.talkNode[i][1]:getAnimation():play()
+
+                self.talkNode[i][2] = self:animMgr():addAnimation(self.dbnode[i],talkArmature[2])
+                self.talkNode[i][2]:getAnimation():play()
+            end
         end
     end
 
@@ -265,33 +289,46 @@ function CourseControl:startUpCourseEvent()
     if self.currEventVo == nil then return end
     dump(self.currEventVo)
     if self.currEventVo.type == bbfd.COURSE_EVENT_ORDER.SET_FILPPED then
-        self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("BaseCourseEvent",self.currEventVo,self)
+        self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("BaseCourseEvent",self.currEventVo,self,self.dbInteract,self.dbnode)
     elseif self.currEventVo.type == bbfd.COURSE_EVENT_ORDER.SET_VISIBLE then
-        self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("BaseCourseEvent",self.currEventVo,self)
+        self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("BaseCourseEvent",self.currEventVo,self,self.dbInteract,self.dbnode)
+    elseif self.currEventVo.type == bbfd.COURSE_EVENT_ORDER.PLAY_OVER then
+        self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("BaseCourseEvent",self.currEventVo,self,self.dbInteract,self.dbnode)
     elseif self.currEventVo.type == bbfd.COURSE_EVENT_ORDER.SET_SCALE then
-        self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("BaseCourseEvent",self.currEventVo,self)
+        self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("BaseCourseEvent",self.currEventVo,self,self.dbInteract,self.dbnode)
     elseif self.currEventVo.type == bbfd.COURSE_EVENT_ORDER.SCALE_TO then
-        self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("BaseCourseEvent",self.currEventVo,self)
+        self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("BaseCourseEvent",self.currEventVo,self,self.dbInteract,self.dbnode)
     elseif self.currEventVo.type == bbfd.COURSE_EVENT_ORDER.SET_POSITION then
-        self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("BaseCourseEvent",self.currEventVo,self)
+        self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("BaseCourseEvent",self.currEventVo,self,self.dbInteract,self.dbnode)
     elseif self.currEventVo.type == bbfd.COURSE_EVENT_ORDER.SET_OPACITY then
-        self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("BaseCourseEvent",self.currEventVo,self)
+        self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("BaseCourseEvent",self.currEventVo,self,self.dbInteract,self.dbnode)
     elseif self.currEventVo.type == bbfd.COURSE_EVENT_ORDER.TITLE_EVENT then
-        self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("PanelCourseEvent",self.currEventVo,self)
+        self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("PanelCourseEvent",self.currEventVo,self,self.dbInteract,self.dbnode)
+    elseif self.currEventVo.type == bbfd.COURSE_EVENT_ORDER.FADE_IN then
+        self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("BaseCourseEvent",self.currEventVo,self,self.dbInteract,self.dbnode)
     elseif self.currEventVo.type == bbfd.COURSE_EVENT_ORDER.TIME then
         self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("BaseCourseEvent",self.currEventVo,self,self.dbInteract,self.dbnode)
     elseif self.currEventVo.type == bbfd.COURSE_EVENT_ORDER.CLICK then
         if self["Panel_Button"..self.currEventVo.click] ~= nil then
              self["Panel_Button"..self.currEventVo.click]:setVisible(true)
+        end
+        if self["WaitTouch"..self.currEventVo.click] ~= nil then
              self["WaitTouch"..self.currEventVo.click]:setVisible(true)
         end
+         
     elseif self.currEventVo.type == bbfd.COURSE_EVENT_ORDER.MOVE_TO then
-        self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("BaseCourseEvent",self.currEventVo,self)
+        self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("BaseCourseEvent",self.currEventVo,self,self.dbInteract,self.dbnode)
     elseif self.currEventVo.type == bbfd.COURSE_EVENT_ORDER.LOADING_BAR then
         self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("TimerCourseEvent",self.currEventVo,self)
         self.updateAbled = true
     elseif self.currEventVo.type == bbfd.COURSE_EVENT_ORDER.MULTI_CLICK then
         self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("OperateCourseEvent",self.currEventVo,self)
+	elseif self.currEventVo.type == bbfd.COURSE_EVENT_ORDER.FADE_IN then
+        self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("BaseCourseEvent",self.currEventVo,self,self.dbInteract,self.dbnode)
+    elseif self.currEventVo.type == bbfd.COURSE_EVENT_ORDER.FADE_OUT then
+        self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("BaseCourseEvent",self.currEventVo,self,self.dbInteract,self.dbnode)
+	elseif self.currEventVo.type == bbfd.COURSE_EVENT_ORDER.MOVE_BY then
+        self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("BaseCourseEvent",self.currEventVo,self,self.dbInteract,self.dbnode)
     end
 
     if self.currEventOrder ~= nil then

@@ -37,19 +37,26 @@ function OperateCourseEvent:execute()
   -- printInfo("OperateCourseEvent:execute1")
    if self:getVo() ~= nil then
        if self:getVo().type == bbfd.COURSE_EVENT_ORDER.CLICK then
-            printInfo("-----------------------------------------------OperateCourseEvent-bbfd.COURSE_EVENT_ORDER.CLICK")
+           -- printInfo("-----------------------------------------------OperateCourseEvent-bbfd.COURSE_EVENT_ORDER.CLICK")
             self:executeFinish()
             self:goDispose()
        elseif self:getVo().type == bbfd.COURSE_EVENT_ORDER.MULTI_CLICK then
             --data,nextEvent
-            printInfo(" OperateCourseEvent:execute")
+            
             local multidata = self:getVo().data
-            for i,v in ipairs(multidata) do
-               local evtorder = bbfd.courseFactory:createCourseEventOrder("MultiCourseEvent",v,self.currCouseCtrl,i)
-               self.multiEventTable[i] = evtorder
-               evtorder:setParentEventId(self:getEventId())
-               evtorder:setMultiEventType(bbfd.COURSE_MULTI_TYPE.EVENT_DATA)
-               evtorder:startUpCourseMultiEvent()
+           -- printInfo(" OperateCourseEvent:execute"..#multidata)
+
+            for i=1,#multidata do
+              -- printInfo("kevin:"..i)
+               if multidata[i] ~= nil then
+                   local evtorder = bbfd.courseFactory:createCourseEventOrder("MultiCourseEvent",multidata[i],self.currCouseCtrl,i)
+                   self.multiEventTable[i] = evtorder
+                   evtorder:setParentEventId(self:getEventId())
+                   evtorder:setMultiEventType(bbfd.COURSE_MULTI_TYPE.EVENT_DATA)
+                   evtorder:startUpCourseMultiEvent()
+                   --printInfo("kevin:"..i.."end")
+               end
+               
               -- printInfo(" OperateCourseEvent:executeMultiCourseEvent:"..i)
             end
 

@@ -11,7 +11,7 @@ local TimerCourseEvent = class("TimerCourseEvent",require("app.views.Course.Base
 function TimerCourseEvent:onCreate(couseCtrl)
     TimerCourseEvent.super.onCreate(self,couseCtrl)
     self.updateEventTime = 0
-
+    self.startmusic = false
 end
 
 --如要定时处理的事件指令类型
@@ -19,11 +19,18 @@ function TimerCourseEvent:execute(dt)
    if self:getVo().type == bbfd.COURSE_EVENT_ORDER.LOADING_BAR then
        self.updateEventTime = self.updateEventTime + dt
        --printInfo("updateEventTime：".. self.updateEventTime)
-       --如果到了进度时间
+       --播放声音
+        if self.startmusic == false and self:getVo().music then
+          self:audioMgr():playEffect(self:getVo().music,false)
+          self.startmusic = true
+        end
+
+        --如果到了进度时间
        if self.updateEventTime >= self:getVo().time and self.updateEventTime - dt < self:getVo().time then
            if not tolua.isnull(self.currCouseCtrl[self:getVo().object]) then
                  self.currCouseCtrl[self:getVo().object]:setPercent(100)
                  self:executeFinish()
+                 self:audioMgr():stopMusic()
            else
                loggerGameLog(self:getVo().object..":no find Object!--TimerCourseEvent:execute")
            end

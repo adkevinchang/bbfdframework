@@ -10,9 +10,7 @@ function CourseView:onCreate(courseinfo)
     display.loadSpriteFrames("Common/commonUI.plist","Common/commonUI.png")
 	self.csbFile = ""..BrainsData.Current.GameName.."/"..BrainsData.Current.SceneName.."Scene.csb"
     --printInfo(csbFile)
-    if courseinfo and courseinfo == "GameSkipModel" then
-        self.csbFile = "gameSkipScene.csb"
-    end
+
     if self.csbFile then
         self:createResourceNode(self.csbFile)
     end

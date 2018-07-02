@@ -40,6 +40,12 @@ bbfd.COURSE_EVENT_ORDER = {
    LOADING_BAR = "LoadingBar",
    SET_POSITION = "setPosition",
    SET_OPACITY = "setOpacity",
+   FADE_IN = "FadeIn",
+   PLAY_OVER = "PlayOver",
+   FADE_OUT = "FadeOut",
+   TALK_SETTING = "TalkSetting",
+   MOVE_BY = "MoveBy",
+   MOVE_MAP = "MoveMap",
 }
 
 bbfd.COURSE_TYPE = {
@@ -51,6 +57,7 @@ bbfd.COURSE_MODEL = {
   BASE = "BaseModel",  
   EDIT_SCENE = "EditScene",  
   MUSIC_SCORE = "MusicScore", 
+  GAME_SKIP_MODEL = "GameSkipModel", 
 }
 
 bbfd.COURSE_END_SCENE = "BackScene"

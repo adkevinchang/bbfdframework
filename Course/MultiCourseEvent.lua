@@ -57,35 +57,43 @@ function MultiCourseEvent:startUpCourseMultiEvent()
     if self.currEventVo == nil then return end
     --dump(self.currEventVo)
     if self.currEventVo.type == bbfd.COURSE_EVENT_ORDER.SET_FILPPED then
-        self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("BaseCourseEvent",self.currEventVo,self.currCouseCtrl)
+        self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("BaseCourseEvent",self.currEventVo,self.currCouseCtrl,self.currCouseCtrl.dbInteract,self.currCouseCtrl.dbnode)
         -- printInfo("MultiCourseEvent:startUpCourseMultiEvent-SET_FILPPED"..self.currExecEventIndex)
     elseif self.currEventVo.type == bbfd.COURSE_EVENT_ORDER.SET_VISIBLE then
-        self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("BaseCourseEvent",self.currEventVo,self.currCouseCtrl)
+        self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("BaseCourseEvent",self.currEventVo,self.currCouseCtrl,self.currCouseCtrl.dbInteract,self.currCouseCtrl.dbnode)
        --  printInfo("MultiCourseEvent:startUpCourseMultiEvent-SET_VISIBLE"..self.currExecEventIndex)
     elseif self.currEventVo.type == bbfd.COURSE_EVENT_ORDER.SCALE_TO then
-        self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("BaseCourseEvent",self.currEventVo,self.currCouseCtrl)
+        self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("BaseCourseEvent",self.currEventVo,self.currCouseCtrl,self.currCouseCtrl.dbInteract,self.currCouseCtrl.dbnode)
         -- printInfo("MultiCourseEvent:startUpCourseMultiEvent-SCALE_TO"..self.currExecEventIndex)
     elseif self.currEventVo.type == bbfd.COURSE_EVENT_ORDER.SET_POSITION then
-        self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("BaseCourseEvent",self.currEventVo,self.currCouseCtrl)
+        self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("BaseCourseEvent",self.currEventVo,self.currCouseCtrl,self.currCouseCtrl.dbInteract,self.currCouseCtrl.dbnode)
        --  printInfo("MultiCourseEvent:startUpCourseMultiEvent-SET_POSITION"..self.currExecEventIndex)
     elseif self.currEventVo.type == bbfd.COURSE_EVENT_ORDER.SET_SCALE then
-        self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("BaseCourseEvent",self.currEventVo,self.currCouseCtrl)
+        self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("BaseCourseEvent",self.currEventVo,self.currCouseCtrl,self.currCouseCtrl.dbInteract,self.currCouseCtrl.dbnode)
        --  printInfo("MultiCourseEvent:startUpCourseMultiEvent-SET_SCALE"..self.currExecEventIndex)
     elseif self.currEventVo.type == bbfd.COURSE_EVENT_ORDER.SET_OPACITY then
-        self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("BaseCourseEvent",self.currEventVo,self.currCouseCtrl)
+        self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("BaseCourseEvent",self.currEventVo,self.currCouseCtrl,self.currCouseCtrl.dbInteract,self.currCouseCtrl.dbnode)
     elseif self.currEventVo.type == bbfd.COURSE_EVENT_ORDER.TIME then
         self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("BaseCourseEvent",self.currEventVo,self.currCouseCtrl,self.currCouseCtrl.dbInteract,self.currCouseCtrl.dbnode)
         -- printInfo("MultiCourseEvent:startUpCourseMultiEvent-TIME"..self.currExecEventIndex)
     elseif self.currEventVo.type == bbfd.COURSE_EVENT_ORDER.CLICK then
         if self.currCouseCtrl["Panel_Button"..self.currEventVo.click] ~= nil then
              self.currCouseCtrl["Panel_Button"..self.currEventVo.click]:setVisible(true)
+        end
+        if self.currCouseCtrl["WaitTouch"..self.currEventVo.click] ~= nil then
              self.currCouseCtrl["WaitTouch"..self.currEventVo.click]:setVisible(true)
         end
         self.currEventOrder = nil
-        -- printInfo("MultiCourseEvent:startUpCourseMultiEvent-CLICK"..self.currExecEventIndex)
+        --printInfo("MultiCourseEvent:startUpCourseMultiEvent-CLICK"..self.currExecEventIndex)
     elseif self.currEventVo.type == bbfd.COURSE_EVENT_ORDER.MOVE_TO then
        -- printInfo("MultiCourseEvent:startUpCourseMultiEvent-MOVE_TO"..self.currExecEventIndex)
-        self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("BaseCourseEvent",self.currEventVo,self.currCouseCtrl)
+        self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("BaseCourseEvent",self.currEventVo,self.currCouseCtrl,self.currCouseCtrl.dbInteract,self.currCouseCtrl.dbnode)
+    elseif self.currEventVo.type == bbfd.COURSE_EVENT_ORDER.FADE_IN then
+       -- printInfo("MultiCourseEvent:startUpCourseMultiEvent-FADE_IN"..self.currExecEventIndex)
+        self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("BaseCourseEvent",self.currEventVo,self.currCouseCtrl,self.currCouseCtrl.dbInteract,self.currCouseCtrl.dbnode)
+    elseif self.currEventVo.type == bbfd.COURSE_EVENT_ORDER.FADE_OUT then
+       -- printInfo("MultiCourseEvent:startUpCourseMultiEvent-FADE_OUT"..self.currExecEventIndex)
+        self.currEventOrder = bbfd.courseFactory:createCourseEventOrder("BaseCourseEvent",self.currEventVo,self.currCouseCtrl,self.currCouseCtrl.dbInteract,self.currCouseCtrl.dbnode)
     end
 
     if self.currEventOrder ~= nil then

@@ -128,6 +128,8 @@ function CourseManager:playNextScene()
                     bbfd.courseFactory:productBaseModel(currplayvo)
                 elseif currplayvo.model == bbfd.COURSE_MODEL.MUSIC_SCORE then
                     bbfd.courseFactory:productMusicScoreModel(currplayvo)
+                elseif currplayvo.model == bbfd.COURSE_MODEL.GAME_SKIP_MODEL then
+                    bbfd.courseFactory:productGameSkipModel(currplayvo)
                 end
             else
 
@@ -149,7 +151,7 @@ function CourseManager:checkCourseNodeProp(cousenm)
     if cousenm == nil then return false end
     local currplayvo =  self.currCourseData[cousenm]
     if currplayvo == nil then return false end
-    if currplayvo.model == bbfd.COURSE_MODEL.BASE then
+    if currplayvo.model == bbfd.COURSE_MODEL.BASE or currplayvo.model == bbfd.COURSE_MODEL.GAME_SKIP_MODEL then
         printInfo("checkCourseNodeProp:new")
         return false
     else

@@ -60,5 +60,27 @@ function CourseModel:getDelayCommonGame()
     return self:getVo()["delayCommonGame"]
 end
 
+--对话
+function CourseModel:getTalkFile()
+	if self:getVo() == nil then return nil end
+	return self:getVo()["talkFile"]
+end
+
+function CourseModel:getTalkArmature()
+	if self:getVo() == nil then return nil end
+	return self:getVo()["talkArmature"]
+end
+
+function CourseModel:getTalkIsActive()
+	if self:getVo() == nil then return nil end
+	return self:getVo()["talkIsActive"]
+end
+
+--地图名字
+function CourseModel:getMapName()
+	if self:getVo() == nil then return nil end
+	return self:getVo()["mapName"]
+end
+
 --endregion
 return CourseModel

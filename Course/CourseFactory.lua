@@ -20,6 +20,11 @@ function CourseFactory:productBaseModel(couseModelVo,...)
    StartupGameControl("Course","CourseView",couseModelVo,...)
 end
 
+--创建课程的基础模块
+function CourseFactory:productGameSkipModel(couseModelVo,...)
+   StartupGameControl("CourseSkip","CourseSkipView",couseModelVo,...)
+end
+
 --创建乐谱课程模块
 function CourseFactory:productMusicScoreModel(couseModelVo,...)
    StartupGameControl("MusicScoreCourse","MusicScoreCourseView",couseModelVo,...)
