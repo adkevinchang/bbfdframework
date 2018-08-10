@@ -36,9 +36,9 @@ end
   
   
 function BaseScene:onEnterTransitionFinish()  
-printInfo("BaseScene:onEnterTransitionFinish"..self.bbfdId) 
+    --printInfo("BaseScene:onEnterTransitionFinish"..self.bbfdId) 
     self:evtMgr():Brocast(bbfd.EVENT_VIEW_ONENTER,self)
-    --self:initLayout()
+    self:initLayout()
 end  
   
   

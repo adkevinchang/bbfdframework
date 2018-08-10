@@ -120,8 +120,6 @@ function UiManager:initScene(scene)
     end
     self.currScene = scene
     self:initLayer("mainbg","maingame","mainmask","mianpanel")
-    self:initLoadAction()
-    self:showLoadAction(false)
 end
 
 --初始化过渡动画场景
@@ -201,8 +199,6 @@ function UiManager:initTraScene(scene,time)
 
    self.currScene = scene
    self:initLayer("mainbg","maingame","mainmask","mianpanel")
-   self:initLoadAction()
-   self:showLoadAction(false)
 end
 
 function UiManager:getBgLayer()
@@ -233,47 +229,32 @@ function UiManager:getPanelLayer()
    return self.currLayers[4] 
 end
 
---初始化通用的加载动画和音效
-function UiManager:initLoadAction()
-   
-   if self.loadAction then return end
-
-   local factory = db.DBCCFactory:getInstance()
-   factory:loadDragonBonesData("go001/skeleton.xml")
-   factory:loadTextureAtlas("go001/texture.xml")
-   self.loadAction = factory:buildArmatureNode("go001")
-   --self:addChild(node)
-   self.loadAction:setPosition(0,display.height)
-   self.loadAction:retain()
-   --self.loadAction:getAnimation():gotoAndPlay("start0")
-   --self.soundId = ccexp.AudioEngine:play2d("loading.mp3", true)  --播放音效
-   
-end
-
 --[[
 是否显示动画
 showed:true 
 ]]
 function UiManager:showLoadAction(showed)
-    if self.loadAction == nil then
-        error(" UiManager:showLoading - no loadAction , Please UiManager:initScene(scene)", 0)
-        return
-    end
-    self.loadAction:setVisible(showed)
     if showed then
-        --printInfo("UiManager:showLoadAction addChild1")
-        if self.loadAction:getParent() == nil then
-              self:getPanelLayer():addChild(self.loadAction)
-        end
-        self.loadAction:setPosition(0,display.height)
-        self.loadAction:getAnimation():gotoAndPlay("start0")
-        self.soundId = ccexp.AudioEngine:play2d("loading.mp3", true)
+        printInfo("UiManager:showLoadAction addChild1")
+
+		bbfd.animMgr:loadDragonBonesFile("go001")
+
+		self.loadAction = bbfd.animMgr:addAnimation(self:getPanelLayer(),"go001",{0,display.height})
+		bbfd.animMgr:playAnimation(self.loadAction,"start0")
+
+		bbfd.audioMgr:stopAllEffect()
+		self.soundId = bbfd.audioMgr:playEffect("loading.mp3", true)
     else
-        --printInfo("UiManager:showLoadAction addChild2")
+        printInfo("UiManager:showLoadAction addChild2")
+
         if self.soundId ~= nil then
-            self.loadAction:removeFromParent()
-            ccexp.AudioEngine:stop(self.soundId)
+			bbfd.audioMgr:stopEffect(self.soundId)
         end
+	
+		if self.loadAction then 
+			bbfd.animMgr:disposeDragonBones("go001","go001")
+			self.loadAction:removeFromParent()
+		end
     end
 end
 

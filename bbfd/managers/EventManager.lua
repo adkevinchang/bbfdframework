@@ -21,6 +21,7 @@ end
 
 --添加事件监听
 function EventManager:AddListener(event,handle)
+    printInfo("EventManager:AddListener:"..event)
     if not event or type(event) ~= "string" then
        error("event parameter in AddListener function has to be string,"..type(event).."not right!")
     end
@@ -52,10 +53,11 @@ end
 
 --广播事件
 function EventManager:Brocast(event,...)
+    printInfo("EventManager:Brocast:"..event)
     if not EventManager.events[event] then
-        --error("Brocast"..event.."has no event");
+       --error("Brocast"..event.."has no event");
     else
-       -- printInfo("EventManager:Brocast"..event)
+        printInfo("EventManager:Brocast1"..event)
         EventManager.events[event]:fire(...);
     end
 end

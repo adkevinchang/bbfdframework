@@ -327,6 +327,48 @@ function DisplayUtil:translationEffect(node,px,py,overcall)
     end
 end
 
+--移动到指定目标
+function DisplayUtil:showMoveTo(node,time,position,overcall)
+   if tolua.isnull(node) then return end
+   local seq = cc.Sequence:create(cc.MoveTo:create(time,position),
+                                    cc.CallFunc:create(function()
+                                        if overcall ~= nil then
+                                            overcall()
+                                        end
+                                    end)
+                                  )
+    node:runAction(seq)
+end
+
+--移动指定目标一段距离
+function DisplayUtil:showMoveBy(node,time,position,overcall)
+   if tolua.isnull(node) then return end
+   local seq = cc.Sequence:create(cc.MoveBy:create(time,position),
+                                    cc.CallFunc:create(function()
+                                        if overcall ~= nil then
+                                            overcall()
+                                        end
+                                    end)
+                                  )
+    node:runAction(seq)
+end
+
+--移动到指定目标
+function DisplayUtil:showScaleTo(node,time,scaleval,overcall)
+   if tolua.isnull(node) then return end
+   local easeBackOut = cc.EaseBackOut:create(cc.ScaleTo:create(time,scaleval))
+   local seq = cc.Sequence:create(easeBackOut,
+                                    cc.CallFunc:create(function()
+                                        if overcall ~= nil then
+                                            overcall()
+                                        end
+                                    end)
+                                  )
+    node:runAction(seq)
+end
+
+
+
 --[[
 
 延迟

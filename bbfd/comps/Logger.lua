@@ -228,16 +228,15 @@ end
 
 --获取应用所在设备本地文件夹
 function getDeviceLocalDir()
-
+    local localAppName = "ddtcyj_teacher"
     if device.platform == "windows" then
-        return "./ddtcyj"
+        return "./"..localAppName
     elseif device.platform == "android" then
-        return "/mnt/sdcard/ddtcyj"
+        return "/mnt/sdcard/"..localAppName
     elseif device.platform == "ios" then
-        return "/ducoment/ddtcyj"
+        return "/ducoment/"..localAppName
     else
         return ""
     end
-
 end
 --endregion
