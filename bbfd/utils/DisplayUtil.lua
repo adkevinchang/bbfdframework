@@ -368,6 +368,19 @@ function DisplayUtil:showScaleTo(node,time,scaleval,overcall)
 end
 
 
+--移动效果到指定目标
+function DisplayUtil:showEffMoveTo(node,time,position,overcall)
+   if tolua.isnull(node) then return end
+   local easeBackOut = cc.EaseBackOut:create(cc.MoveTo:create(time,position))
+   local seq = cc.Sequence:create(easeBackOut,
+                                    cc.CallFunc:create(function()
+                                        if overcall ~= nil then
+                                            overcall()
+                                        end
+                                    end)
+                                  )
+    node:runAction(seq)
+end
 
 --[[
 

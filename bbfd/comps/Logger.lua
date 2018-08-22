@@ -20,7 +20,7 @@ function loggerGameLog(fmt, ...)
     file:write("\n"..table.concat(t).."\n")  
     file:close()  
 	
-    printLog("GL-INFO", fmt, ...)
+    printInfo(fmt)
 end
 
 --用来输出渲染树，检测内存泄漏  

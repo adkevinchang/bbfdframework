@@ -5,9 +5,11 @@ bbfd = bbfd or {}
 
 require "bbfd.constants.functions"
 require "bbfd.comps.Logger"
+require "bbfd.constants.BaseConstant"
 
 TouchGestureUtil = require("bbfd.utils.TouchGestureUtil")
 DisplayUtil = require("bbfd.utils.DisplayUtil")
 CryptoUtil = require("bbfd.utils.CryptoUtil")
 MathsUtil = require("bbfd.utils.MathsUtil")
+StringUtil = require("bbfd.utils.StringUtil")
 --endregion
