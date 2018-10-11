@@ -20,10 +20,10 @@ bbfd.NET_MODEL = "youjiao"
 
 --本地地址
 --热更本地配置文件地址
-bbfd.LOCAL_MANIFESTS = "project.manifest"
+bbfd.LOCAL_MANIFESTS = "res/project.manifest"
 
 --客户端缓存地址
-bbfd.STORAGE_PATHS = "bbfd/ddyj"
+bbfd.STORAGE_PATHS = "downloadZipFile"
 
 --本地测试 http://192.168.1.170/weixin/remote-assets
 --endregion

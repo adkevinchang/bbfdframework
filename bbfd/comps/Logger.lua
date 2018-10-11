@@ -234,7 +234,7 @@ function getDeviceLocalDir()
     elseif device.platform == "android" then
         return "/mnt/sdcard/"..localAppName
     elseif device.platform == "ios" then
-        return "/ducoment/"..localAppName
+        return "/document/"..localAppName
     else
         return ""
     end

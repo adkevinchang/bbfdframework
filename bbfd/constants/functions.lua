@@ -8,7 +8,7 @@ function createGameControl(ctrlclassstr,viewname,modelvo)
     local control = require(ctrlclassstr):create()
     --print(ctrlclassstr)
     assert(control, "functions createGameControl() -  don't find "..ctrlclassstr)
-   dump(modelvo,"createGameControl:")
+   --dump(modelvo,"createGameControl:")
     control:initFunMod(viewname,modelvo)
     return control
 end
